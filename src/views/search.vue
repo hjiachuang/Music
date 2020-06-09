@@ -53,7 +53,7 @@
                     <v-row>
                         <v-col cols="4">
                             <v-img style="border-radius: 50%;" width="100%"
-                                   :src=`https://y.gtimg.cn/music/photo_new/T002R68x68M000${searchResult.zhida.albummid}.jpg?max_age=2592000`></v-img>
+                                   :src="`https://y.gtimg.cn/music/photo_new/T002R68x68M000${searchResult.zhida.albummid}.jpg?max_age=2592000`"></v-img>
                         </v-col>
                         <v-col cols="auto">
                             <v-row style="height: 100%;" class="flex-column justify-center">
@@ -193,6 +193,5 @@
 </script>
 
 <style lang="scss" scoped>
-    .search {
-    }
+
 </style>
