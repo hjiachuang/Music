@@ -4,7 +4,7 @@
             <v-app-bar-nav-icon @click="$router.go(-1)">
                 <v-icon :style="`color: ${color}`">mdi-chevron-left</v-icon>
             </v-app-bar-nav-icon>
-            <v-toolbar-title :style="`color: ${color}`">{{name}}</v-toolbar-title>
+            <v-toolbar-title :style="`color: ${color}`" @click="goToTop">{{name}}</v-toolbar-title>
             <v-spacer></v-spacer>
         </v-app-bar>
         <!--占坑用-->
@@ -48,14 +48,25 @@
                             this.backgroundColor = 'white'
                             this.name = '全部歌手'
                             break
+                        case /^\/album\/new$/.test(path):
+                        case /^\/album\/new\/$/.test(path):
+                            this.color = 'black'
+                            this.backgroundColor = 'white'
+                            this.name = '新碟首发'
+                            break
                         case /^\/playlist\/detail\/\d*$/.test(path):
-                        case /^\/artist\/detail\/\d*$/.test(path):
+                        case /^\/artist\/detail\/[A-Za-z0-9]*$/.test(path):
+                        case /^\/album\/detail\/[A-Za-z0-9]*$/.test(path):
                             this.color = 'white'
                             this.backgroundColor = 'transparent'
                             this.name = name
                             break
                     }
                 }
+            },
+            goToTop() {
+                console.log("返回顶部")
+                document.getElementById('artist_detail_container').scrollTop = '0px'
             }
         }
     }
