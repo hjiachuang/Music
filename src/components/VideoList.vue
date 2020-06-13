@@ -2,7 +2,7 @@
     <div class="videolist" style="position: relative; background-color: #fff;">
         <v-container>
             <v-row>
-                <v-col cols="6" class="pb-1" style="position: relative;" v-for="(item, index) in videolist" :key="index">
+                <v-col cols="6" class="pb-1" style="position: relative;" v-for="(item, index) in videolist" :key="index" @click="$router.push(`/mv/detail/${item.vid}?name=${item.title}`)">
 <!--                    <img :src="item.picurl" :alt="item.title" style="width: 100%; object-fit: cover">-->
                     <v-img :src="item.picurl" style="border-radius: 0.5rem;" aspect-ratio="1.778"></v-img>
                     <p class="body-2 mt-2 mb-0" style="line-height: 0.9rem; height: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{item.title}}</p>

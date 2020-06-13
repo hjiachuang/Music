@@ -47,7 +47,7 @@
                 <v-col cols="12" class="title font-weight-bold personal-title">最新音乐</v-col>
             </v-row>
             <div class="newsong">
-                <v-row v-for="(item, index) in newsong" :key="index">
+                <v-row v-for="(item, index) in newsong" :key="index" @click="$router.push(`/song/${item.mid}`)">
                     <v-col cols="3">
                         <v-lazy>
                             <v-img class="mx-auto align-center text-center" style="border-radius: 6px" width="100%" height="100%" :src="`https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.album.pmid}.jpg?max_age=2592000`">

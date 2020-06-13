@@ -1,3 +1,16 @@
 html {
     font-family: '宋体', Tahoma, Verdana, STHeiTi, simsun, sans-serif;
 }
+
+.vue-video-player {
+    .vjs-big-play-button{
+        top: 50% !important;
+        left: 50% !important;
+        margin-top: -25px !important;
+        margin-left: -25px !important;
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 50% !important;
+        background-color: rgba(76,175,80,0.5) !important;
+    }
+}

@@ -54,11 +54,22 @@
                             this.backgroundColor = 'white'
                             this.name = '新碟首发'
                             break
+                        case /^\/mv$/.test(path):
+                        case /^\/mv\/$/.test(path):
+                            this.color = 'black'
+                            this.backgroundColor = 'white'
+                            this.name = 'MV'
+                            break
                         case /^\/playlist\/detail\/\d*$/.test(path):
                         case /^\/artist\/detail\/[A-Za-z0-9]*$/.test(path):
                         case /^\/album\/detail\/[A-Za-z0-9]*$/.test(path):
                             this.color = 'white'
                             this.backgroundColor = 'transparent'
+                            this.name = name
+                            break
+                        case /^\/mv\/detail\/[A-Za-z0-9]*$/.test(path):
+                            this.color = 'black'
+                            this.backgroundColor = 'white'
                             this.name = name
                             break
                     }
