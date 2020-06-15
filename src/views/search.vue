@@ -69,7 +69,7 @@
                 </v-card>
                 <ul class="pa-0" v-infinite-scroll="load" infinite-scroll-disabled="disabled"
                     infinite-scroll-distance="0" v-if="searchResult.song.list.length !== 0">
-                    <v-list-item two-line tag="li" v-for="(item, index) in searchResultSong" :key="index" class="pa-0">
+                    <v-list-item two-line tag="li" v-for="(item, index) in searchResultSong" :key="index" class="pa-0" @click="$router.push(`/song/${item.mid}`)">
                         <v-list-item-avatar>
                             {{index + 1}}
                         </v-list-item-avatar>

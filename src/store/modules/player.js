@@ -84,21 +84,18 @@ export default {
                     state.player.play()
                     state.playing = true
                     this.dispatch('player/setTimer')
-                    // this.dispatch('weblog')
                 }else if(state.player.ended){
                     state.player.load()
-                    state.player.oncanplay = () => { 
-                        this.commit('player/play')
-                    }
-                }else{
-                    return
+                    state.player.play()
+                    state.playing = true
+                    this.dispatch('player/setTimer')
                 }
             }else {
                 state.player.src = state.play_link
                 state.player.load()
-                state.player.oncanplay = () => { 
-                    this.commit('player/play')
-                }
+                state.player.play()
+                state.playing = true
+                this.dispatch('player/setTimer')
             }
         },
         //暂停
@@ -114,7 +111,7 @@ export default {
     actions: {
         //播放（新播放）
         async play({ dispatch, commit, state, rootState }) {
-            if(state.play_id !== "" && state.play_id === rootState.playlist.playlist_list[state.play_previous_index].id) {
+            if(state.play_id !== "" && state.play_id === rootState.playlist.playlist_list[state.play_previous_index].mid) {
                 if(state.play_link_expire < new Date()) {
                     const link_data = await axios.post("/url/search",{
                         songName: rootState.playlist.playlist_list[state.play_previous_index].name,
@@ -143,9 +140,9 @@ export default {
                         return
                     }
                     commit('setPlayMessage',{
-                        id: rootState.playlist.playlist_list[state.play_previous_index].id,
+                        id: rootState.playlist.playlist_list[state.play_previous_index].mid,
                         name: rootState.playlist.playlist_list[state.play_previous_index].name,
-                        articles: rootState.playlist.playlist_list[state.play_previous_index].singer[0].name,
+                        articles: rootState.playlist.playlist_list[state.play_previous_index].singer,
                         album: rootState.playlist.playlist_list[state.play_previous_index].album.name,
                         link: link,
                         img: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${rootState.playlist.playlist_list[state.play_previous_index].album.pmid}.jpg?max_age=2592000`
@@ -160,13 +157,11 @@ export default {
         index({ dispatch, commit, state, rootState }, options) {
             if(options.type === "empty") {
                 if(options.lists_id === rootState.playlist.playlist_id) {
-                    if(options.lists[options.index].id === state.play_id) {
+                    if(options.lists[options.index].mid === state.play_id) {
                         dispatch('play')
-                        return
                     }else {
                         commit('setPlayPreviousIndex', parseInt(options.index))
                         dispatch('play')
-                        return
                     }
                 }else {
                     commit("playlist/setPlayLists",{
@@ -175,7 +170,6 @@ export default {
                     },{root: true})
                     commit('setPlayPreviousIndex', parseInt(options.index))
                     dispatch('play')
-                    return
                 }
             }else if(options.type === "add") {
                 const tempLists = JSON.parse(JSON.stringify(rootState.playlist.playlist_list))
@@ -190,7 +184,7 @@ export default {
                     return
                 }
                 for(let i in tempLists) {
-                    if(tempLists[i].id === options.lists[options.index].id){
+                    if(tempLists[i].mid === options.lists[options.index].mid){
                         if(state.play_previous_index !== i) {
                             commit('setPlayPreviousIndex', parseInt(i))
                         }
@@ -211,15 +205,19 @@ export default {
         //设置播放定时器
         setTimer({ commit, dispatch, state }) {
             clearTimeout(state.player_timer)
-            const duration = state.player.duration
-            const currentTime = state.player.currentTime
-            const timer = setTimeout(() => {
-                dispatch('next')
-            }, (duration - currentTime + 0.01) * 1000)
-            commit('setTimer',timer)
+            state.player.oncanplay = () => {
+                const duration = state.player.duration
+                const currentTime = state.player.currentTime
+                const timer = setTimeout(() => {
+                    dispatch('next')
+                }, (duration - currentTime + 1) * 1000)
+                commit('setTimer',timer)
+            }
+
         },
         //下一首
         async next({ commit, dispatch, state, rootState }) {
+            clearTimeout(state.player_timer)
             if(rootState.playlist.playlist_list.length <=1) {
                 state.player.load()
                 commit('play')
@@ -249,6 +247,7 @@ export default {
         },
         //上一首
         previous({ commit, dispatch, state, rootState }) {
+            clearTimeout(state.player_timer)
             if(rootState.playlist.playlist_list.length <=1) {
                 state.player.load()
                 commit('play')
@@ -258,7 +257,7 @@ export default {
             const pattern = state.play_pattern
             if(pattern === "List Loop") {
                 let index = state.play_previous_index
-                if(index == 0) {
+                if(index === 0) {
                     index = length - 1
                 }else {
                     index -= 1
@@ -281,9 +280,6 @@ export default {
             if(pattern === "List Loop" || pattern === "Singles Loop" || pattern === "Random Play") {
                 commit('setPlayPattern', pattern)
             }
-        },
-        async weblog({ state }) {
-            await this.$axios.get( window.location.origin + `/music/weblog?type=play&id=${state.play_id}`)
         }
     },
 

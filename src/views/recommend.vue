@@ -58,7 +58,7 @@
                     </v-col>
                     <v-col cols="9" class="d-flex flex-column justify-space-around">
                         <rolling-subtitles style="height: auto" :text="item.name" fontSize="0.875rem" :fontWeight="800"/>
-                        <rolling-subtitles style="height: auto" :text="item.singer[0].name" fontSize="0.775rem" :fontWeight="400"/>
+                        <rolling-subtitles style="height: auto" :text="item.singer | artist" fontSize="0.775rem" :fontWeight="400"/>
                     </v-col>
                 </v-row>
             </div>
@@ -133,6 +133,17 @@ export default {
         },
         toPage(path) {
           this.$router.push(path)
+        }
+    },
+    filters: {
+        artist(arr) {
+            return arr.reduce((sum, v, i) => {
+                sum += v.name
+                if(i !== arr.length - 1) {
+                    sum += ' / '
+                }
+                return sum
+            }, "")
         }
     }
 }

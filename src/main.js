@@ -10,6 +10,7 @@ import Tool from './plugins/tool'
 import Filter from './plugins/filter'
 
 import './assets/scss/custom.scss'
+import './assets/icomoon/style.css'
 import './plugins/element.js'
 
 Vue.config.productionTip = false

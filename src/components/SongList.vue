@@ -5,7 +5,7 @@
             <v-icon class="green--text text--accent-4" v-else>mdi-play-circle</v-icon>
             <span>播放全部</span>
         </div>
-        <div v-for="(item,index) in playlist" :key="index" class="songitem">
+        <div v-for="(item,index) in playlist" :key="index" class="songitem" @click="$router.push(`/song/${item.mid}`)">
             <span class="songitem-index">{{index + 1}}</span>
             <div class="songitem-message">
                 <span class="songitem-message-name">{{item.name || item.songname}}</span>
@@ -18,8 +18,8 @@
                     {{" - " + (item.album && item.album.name || item.albumname)}}
                 </span>
             </div>
-            <v-icon class="green--text text--accent-4 play-icon" v-if="$store.state.player.play_id === item.id && $store.state.player.playing && !$store.state.player.player.ended" @click="playSong(index,item.id)">mdi-pause-circle</v-icon>
-            <v-icon class="green--text text--accent-4 play-icon" v-else @click="playSong(index,item.id)">mdi-play-circle</v-icon>
+            <v-icon class="green--text text--accent-4 play-icon" v-if="$store.state.player.play_id === item.id && $store.state.player.playing && !$store.state.player.player.ended" @click.stop="playSong(index,item.id)">mdi-pause-circle</v-icon>
+            <v-icon class="green--text text--accent-4 play-icon" v-else @click.stop="playSong(index,item.id)">mdi-play-circle</v-icon>
         </div>
         <!-- <div class="mask" v-if="$store.state.music.playing && !$store.state.music.player.ended"></div> -->
     </div>
