@@ -105,6 +105,18 @@ export default {
                 clearTimeout(state.player_timer)
                 state.playing = false
             }
+        },
+        clearPlayer(state) {
+            state.playing = false
+            state.play_id = ""
+            state.play_name = ""
+            state.play_articles = []
+            state.play_album = ""
+            state.play_link = ""
+            state.play_img = ""
+            state.play_previous_index = 0
+            state.player.src = ""
+            state.player.load()
         }
     },
 

@@ -91,7 +91,33 @@
                         <i class="icon-skip-forward" @click="next"></i>
                     </v-col>
                     <v-col class="song-play-list">
-                        <i class="icon-list"></i>
+                        <v-dialog>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn dark v-bind="attrs" v-on="on" icon><i class="icon-list"></i></v-btn>
+                            </template>
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headline">播放列表 ({{playlist.length}})</span>
+                                    <v-spacer></v-spacer>
+                                    <v-btn icon @click="clearPlaylist"><v-icon>mdi-delete</v-icon></v-btn>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container style="line-height: 1.5;">
+                                        <v-row>
+                                            <v-col cols="12" v-for="item in playlist" :key="item.mid">
+                                                <div class="float-left" style="max-width: calc(100% - 24px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                                                    <strong>{{item.name}}</strong> -
+                                                    <span v-for="(item, index) in playArticles" :key="index">
+                                                        {{item.name}}<span v-if="index !== (playArticles.length) - 1">/</span>
+                                                    </span>
+                                                </div>
+                                                <v-icon class="float-right" @click="$store.dispatch('playlist/deleteSong',item.mid)">mdi-close</v-icon>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+                            </v-card>
+                        </v-dialog>
                     </v-col>
                 </v-row>
             </v-container>
@@ -120,6 +146,7 @@
                 playArticles: state => state.player.play_articles,
                 playAlbum: state => state.player.play_album,
                 playImg: state => state.player.play_img,
+                playlist: state => state.playlist.playlist_list
             })
         },
         created() {
@@ -138,7 +165,6 @@
                 this.play()
             },
             playId(id) {
-                console.log(id)
                 this._getSongDetail(id)
             }
         },
@@ -172,11 +198,6 @@
                         const html = singer.reduce((sum, v) => {
                             return sum + `<a href="#/artist/detail/${v.mid}?name=${v.name}">${v.name}</a>`
                         }, "")
-                        // const html = `
-                        // <template>
-                        //     <h4 v-for="item in singer" :key="item.mid">{{item.name}}</h4>
-                        // </template>
-                        // `
                         this.$mesbox.alert(html,"请选择要查看的歌手", {
                             customClass: "mes-box",
                             dangerouslyUseHTMLString: true,
@@ -197,8 +218,8 @@
             previous() {
                 this.$store.dispatch("player/previous")
             },
-            async next() {
-                await this.$store.dispatch("player/next")
+            next() {
+                this.$store.dispatch("player/next")
             },
             play() {
                 if (this.$store.state.player.play_id !== this.songInfo.track_info.id) {
@@ -224,6 +245,23 @@
                 }else {
                     this.$store.dispatch("player/setPlayPattern", "List Loop")
                 }
+            },
+            clearPlaylist() {
+                this.$mesbox.confirm('确定要清空播放列表?', '提示', {
+                    confirmButtonText: '清空',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    customClass: "mes-box",
+                }).then(() => {
+                    this.$store.dispatch("playlist/clearPlaylist")
+                    this.$router.push("/recommend")
+                    // this.$router
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
             }
         },
         beforeDestroy() {
