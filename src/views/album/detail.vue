@@ -1,5 +1,5 @@
 <template>
-    <div class="album-detail" v-loading.fullscreen.lock="loading">
+    <div class="album-detail">
         <div class="album-detail-container">
             <div class="album-detail-bgp">
                 <v-img :src="`https://y.qq.com/music/photo_new/T002R300x300M000${albumDetail.mid}_1.jpg?max_age=2592000`"></v-img>
@@ -51,19 +51,16 @@
         components: { SongList, Description },
         data: () => ({
             albumDetail: {},
-            descriptionShow: false,
-            loading: false
+            descriptionShow: false
         }),
         created() {
-            this.loading = true
+            this.$store.commit("load/setLoad")
             try{
                 this._getAlbum()
+                this.$store.dispatch("load/endLoad")
             }catch(err) {
                 console.log(err)
             }
-            setTimeout(() => {
-                this.loading = false
-            }, 500)
         },
         methods: {
             async _getAlbum() {

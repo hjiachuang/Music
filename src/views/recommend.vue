@@ -95,8 +95,10 @@ export default {
         newsong: []
     }),
     async created() {
+        this.$store.commit("load/setLoad")
         try {
           await this._getRecommend();
+          this.$store.dispatch("load/endLoad")
         }catch(err) {
           console.log(err)
         }

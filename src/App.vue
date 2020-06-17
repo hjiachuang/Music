@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app v-loading.fullscreen="loading">
     <v-content>
       <router-view></router-view>
     </v-content>
@@ -7,7 +7,13 @@
 </template>
 
 <script>
-export default {
-  name: 'app'
-}
+  import { mapState } from 'vuex'
+  export default {
+    name: 'app',
+    computed: {
+      ...mapState({
+        loading: state => state.load.loading
+      })
+    }
+  }
 </script>

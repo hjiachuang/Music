@@ -1,5 +1,5 @@
 <template>
-    <div class="song" v-loading.fullscreen="loading">
+    <div class="song">
         <div class="song-header">
             <v-app-bar fixed class="elevation-0" color="transparent">
                 <v-app-bar-nav-icon @click="$router.go(-1)">
@@ -104,7 +104,7 @@
                                 <v-card-text>
                                     <v-container style="line-height: 1.5;">
                                         <v-row>
-                                            <v-col cols="12" v-for="item in playlist" :key="item.mid">
+                                            <v-col cols="12" v-for="(item, index) in playlist" :key="index" :class="playId === item.mid? 'green--text':''" @click="playThis(index)">
                                                 <div class="float-left" style="max-width: calc(100% - 24px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
                                                     <strong>{{item.name}}</strong> -
                                                     <span v-for="(item, index) in playArticles" :key="index">
@@ -134,8 +134,7 @@
             songInfo: {},
             width: 0,
             progress: 25,
-            timer: null,
-            loading: false
+            timer: null
         }),
         computed: {
             ...mapState({
@@ -150,12 +149,10 @@
             })
         },
         created() {
-            this.loading = true
+            this.$store.commit("load/setLoad")
             this.width = window.document.body.offsetWidth
             this._getSongDetail()
-            setTimeout(() => {
-                this.loading = false
-            }, 500)
+            this.$store.dispatch("load/endLoad")
         },
         mounted() {
             this.getProgress()
@@ -262,6 +259,14 @@
                         message: '已取消删除'
                     });
                 });
+            },
+            playThis(index) {
+                this.$store.dispatch("player/index", {
+                    lists: this.playlist,
+                    lists_id: this.$store.state.playlist.playlist_id,
+                    index: index,
+                    type: "empty"
+                })
             }
         },
         beforeDestroy() {

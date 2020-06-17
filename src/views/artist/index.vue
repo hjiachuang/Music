@@ -1,5 +1,5 @@
 <template>
-    <div class="artist-index" v-loading.fullscreen.lock="loading">
+    <div class="artist-index">
         <div class="artist-container">
             <v-tabs dark centered background-color="teal darken-3" show-arrows v-model="select.sex">
                 <v-tabs-slider color="teal lighten-3"></v-tabs-slider>
@@ -297,25 +297,24 @@
             },
             singerlist: [],
             page: 1,
-            currentPage: 1,
-            loading: false
+            currentPage: 1
         }),
         computed: {
             noMore() {
                 return this.singerlist.length >= this.singer.total
             },
             disabled() {
-                return this.loading || this.noMore
+                return this.$store.state.load.loading || this.noMore
             }
         },
         created() {
-            this.loading = true
+            this.$store.commit("load/setLoad")
             try {
                 this._getSinger(0,0,0,0)
+                this.$store.dispatch("load/endLoad")
             }catch(err) {
                 console.log(err)
             }
-            this.loading = false
         },
         methods: {
             async _getSinger(area,genre,index,sex) {

@@ -1,5 +1,5 @@
 <template>
-    <div class="artist-detail" v-loading.fullscreen.lock="loading">
+    <div class="artist-detail">
         <div class="artist-detail-container" id="artist_detail_container" v-infinite-scroll="load" infinite-scroll-disabled="disabled" infinite-scroll-distance="0">
             <div class="artist-detail-bgp">
                 <div class="artist-detail-bgp-bgp" :style="`background-image: url(${artist_detail.pic.big_white})`" v-if="artist_detail.hasOwnProperty('pic') && artist_detail.pic.hasOwnProperty('big_white') && artist_detail.pic.big_white !== ''"></div>
@@ -76,8 +76,7 @@
             artist_albumList: [],
             artist_mv_tag: [],
             artist_mvList_total: 0,
-            artist_mvList: [],
-            loading: false
+            artist_mvList: []
         }),
         computed: {
             noMore() {
@@ -93,20 +92,18 @@
 
             },
             disabled() {
-                return this.loading || this.noMore
+                return this.$store.state.load.loading || this.noMore
             }
         },
         created() {
             try{
-                this.loading = true;
+                this.$store.commit("load/setLoad");
                 this._getArtistDesc();
                 this._getArtistSonglist();
                 this._getArtistAlbumlist();
                 this._getArtistMvTag();
                 this._getArtistMvlist();
-                setTimeout(() => {
-                    this.loading = false;
-                }, 1000);
+                this.$store.dispatch("load/endLoad");
             }catch(err) {
                 console.log(err)
             }

@@ -1,5 +1,5 @@
 <template>
-    <div class="mv-detail" v-loading.fullscreen="loading">
+    <div class="mv-detail">
         <div class="video-player" ref="video">
             <video-player class="vue-video-player" :options="playerOptions" :playsinline="true" @play="played = true"></video-player>
             <div class="video-player-choice-clarity" v-if="!played">
@@ -68,15 +68,12 @@
                     remainingTimeDisplay: false,
                     fullscreenToggle: true  //全屏按钮
                 }
-            },
-            loading: false
+            }
         }),
         async created() {
-            this.loading = true
+            this.$store.commit("load/setLoad")
             await this._getMvDetail()
-            setTimeout(() => {
-                this.loading = false
-            }, 500)
+            this.$store.dispatch("load/endLoad")
         },
         mounted() {
             this.initVideo()

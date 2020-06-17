@@ -1,5 +1,5 @@
 <template>
-    <div class="mv-index" v-loading.fullscreen="loading">
+    <div class="mv-index">
         <div class="mv-index-container"  v-infinite-scroll="load" infinite-scroll-disabled="disabled" infinite-scroll-distance="0">
             <v-tabs dark centered background-color="teal darken-3" show-arrows>
                 <v-tabs-slider color="teal lighten-3"></v-tabs-slider>
@@ -92,23 +92,20 @@
             page: 1,
             limit: 30,
             mvList: [],
-            mvTotal: 0,
-            loading: false
+            mvTotal: 0
         }),
         computed: {
             noMore() {
                 return this.mvList.length >= this.mvTotal
             },
             disabled() {
-                return this.loading || this.noMore
+                return this.$store.state.load.loading || this.noMore
             }
         },
         created() {
-            this.loading = true
+            this.$store.commit("load/setLoad")
             this._getMv()
-            setTimeout(() => {
-                this.loading = false
-            }, 500)
+            this.$store.dispatch("load/endLoad")
         },
         methods: {
             async _getMv(area=0, version=0) {

@@ -112,8 +112,10 @@
             }
         },
         async created() {
+            this.$store.commit("load/setLoad")
             try {
                 await this._getSearchSuggest()
+                this.$store.dispatch("load/endLoad")
             } catch (err) {
                 console.log(err)
             }

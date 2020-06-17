@@ -166,6 +166,14 @@ export default {
             }
         },
         //主入口
+        /*
+        * options: {
+        *   type: "empty" or "add"  传递过来的歌曲列表是要替换当前播放列表还是添加进播放列表
+        *   lists_id: String        传递过来的歌曲列表的唯一ID
+        *   lists: Array            传递过来的歌曲列表
+        *   index: Number           在这个歌曲列表想播放的那首歌的位置
+        * }
+        * */
         index({ dispatch, commit, state, rootState }, options) {
             if(options.type === "empty") {
                 if(options.lists_id === rootState.playlist.playlist_id) {

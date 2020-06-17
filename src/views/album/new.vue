@@ -1,5 +1,5 @@
 <template>
-    <div class="album-new" v-loading.fullscreen="loading">
+    <div class="album-new">
         <div class="album-new-container">
             <v-slide-group mandatory show-arrows>
                 <v-slide-item v-for="item in new_album_tag" :key="item.id" v-slot:default="{ active, toggle }">
@@ -39,15 +39,14 @@
             new_album_total: 0,
             area: 1,
             page: 1,
-            limit: 30,
-            loading: false
+            limit: 30
         }),
         computed: {
             noMore() {
                 return this.new_album.length >= this.new_album_total
             },
             disabled() {
-                return this.loading || this.noMore
+                return this.$store.state.load.loading || this.noMore
             }
         },
         filters: {
@@ -60,16 +59,15 @@
             }
         },
         created() {
-            this.loading = true
+            this.$store.commit("load/setLoad")
             try{
                 this._getNewAlbumTag()
                 this._getNewAlbum()
+                this.$store.dispatch("load/endLoad")
             }catch(err) {
                 console.log(err)
             }
-            setTimeout(() => {
-                this.loading = false
-            }, 500)
+
         },
         methods: {
             async _getNewAlbumTag() {

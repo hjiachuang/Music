@@ -1,5 +1,5 @@
 <template>
-    <div class="playlist-detail" v-loading.fullscreen.lock="loading">
+    <div class="playlist-detail">
         <div class="playlist-detail-container">
             <div class="playlist-detail-bgp">
                 <v-img :src="playlistDetail.logo"></v-img>
@@ -58,15 +58,15 @@
                 songlist: [],
                 disstid: "",
             },
-            descriptionShow: false,
-            loading: false
+            descriptionShow: false
         }),
         created() {
             this.playlistId = this.$route.params.id
             this.playlistName = this.$route.query.name
-            this.loading = true
+            this.$store.commit("load/setLoad")
             try {
                 this._getPlaylistDetail()
+                this.$store.dispatch("load/endLoad")
             }catch(err) {
                 console.log(err)
             }
@@ -77,7 +77,6 @@
                     const data = await this.$axios.get(`/api/getSongListDetail?disstid=${this.playlistId}`)
                     if(data.status === 200) {
                         this.playlistDetail = data.data.response.cdlist[0]
-                        this.loading = false
                     }else {
                         console.log("网络错误")
                     }
