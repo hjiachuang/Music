@@ -1,5 +1,5 @@
 <template>
-    <div class="playlist-index" style="height: 100vh; overflow: auto;" v-loading.fullscreen.lock="loading">
+    <div class="playlist-index" style="height: 100vh; overflow: auto;">
         <v-container class="py-0">
             <v-row>
                 <v-col class="d-flex justify-space-between align-center">
@@ -77,7 +77,6 @@
                     list: []
                 }
             },
-            loading: false
         }),
         computed: {
             noMore() {
@@ -88,7 +87,7 @@
                 }
             },
             disabled() {
-                return this.loading || this.noMore
+                return this.$store.state.load.loading || this.noMore
             }
         },
         watch: {
@@ -100,11 +99,11 @@
         },
         methods: {
             init() {
-                this.loading = true
+                this.$store.commit("load/setLoad")
                 try{
                     this._getPlaylistsCategory()
                     this._getPlaylists()
-                    this.loading = false
+                    this.$store.dispatch("load/endLoad")
                 }catch(err) {
                     console.log(err)
                 }
