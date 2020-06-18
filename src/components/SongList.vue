@@ -18,8 +18,8 @@
                     {{" - " + (item.album && item.album.name || item.albumname)}}
                 </span>
             </div>
-            <v-icon class="green--text text--accent-4 play-icon" v-if="$store.state.player.play_id === item.id && $store.state.player.playing && !$store.state.player.player.ended" @click.stop="playSong(index,item.id)">mdi-pause-circle</v-icon>
-            <v-icon class="green--text text--accent-4 play-icon" v-else @click.stop="playSong(index,item.id)">mdi-play-circle</v-icon>
+            <v-icon class="green--text text--accent-4 play-icon" v-if="$store.state.player.play_id === item.mid && $store.state.player.playing && !$store.state.player.player.ended" @click.stop="playSong(index,item.mid)">mdi-pause-circle</v-icon>
+            <v-icon class="green--text text--accent-4 play-icon" v-else @click.stop="playSong(index,item.mid)">mdi-play-circle</v-icon>
         </div>
         <!-- <div class="mask" v-if="$store.state.music.playing && !$store.state.music.player.ended"></div> -->
     </div>

@@ -1,7 +1,7 @@
 <template>
     <div class="rank">
         <template v-for="(list, index1) in rankList">
-            <v-card class="mx-auto my-2" max-width="90%" v-for="(item, index2) in list.toplist" :key="`${index1}.${index2}`">
+            <v-card class="mx-auto my-2" max-width="90%" v-for="(item, index2) in list.toplist" :key="`${index1}.${index2}`" @click="$router.push(`/rank/${item.topId}?name=${item.title}&period=${item.period}`)">
                 <v-container class="pa-2">
                     <v-row no-gutters justify="space-between">
                         <v-col cols="4" class="pl-2">

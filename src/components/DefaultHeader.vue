@@ -63,6 +63,7 @@
                         case /^\/playlist\/detail\/\d*$/.test(path):
                         case /^\/artist\/detail\/[A-Za-z0-9]*$/.test(path):
                         case /^\/album\/detail\/[A-Za-z0-9]*$/.test(path):
+                        case /^\/rank\/[A-Za-z0-9]*$/.test(path):
                             this.color = 'white'
                             this.backgroundColor = 'transparent'
                             this.name = name

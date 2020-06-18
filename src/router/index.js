@@ -103,6 +103,21 @@ const routes = [
     ]
   },
   {
+    path: '/rank',
+    component: () => import('../layout/default'),
+    children: [
+      {
+        path: '/',
+        redirect: '/rank'
+      },
+      {
+        path: ':id',
+        name: 'rank-detail',
+        component: () => import('../views/rankDetail')
+      }
+    ]
+  },
+  {
     path: '/song',
     component: () => import('../layout/only'),
     children: [

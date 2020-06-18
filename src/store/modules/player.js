@@ -126,8 +126,8 @@ export default {
             if(state.play_id !== "" && state.play_id === rootState.playlist.playlist_list[state.play_previous_index].mid) {
                 if(state.play_link_expire < new Date()) {
                     const link_data = await axios.post("/url/search",{
-                        songName: rootState.playlist.playlist_list[state.play_previous_index].name,
-                        songAlbum: rootState.playlist.playlist_list[state.play_previous_index].album.title
+                        songName: rootState.playlist.playlist_list[state.play_previous_index].name || rootState.playlist.playlist_list[state.play_previous_index].songname,
+                        songAlbum: rootState.playlist.playlist_list[state.play_previous_index].album.title || rootState.playlist.playlist_list[state.play_previous_index].albumname
                     })
                     if(link_data.status === 200 && link_data.data.code === 1) {
                         const link = link_data.data.result
@@ -141,9 +141,10 @@ export default {
                     commit('play')
                 }
             }else {
+                const songName = rootState.playlist.playlist_list[state.play_previous_index].name || rootState.playlist.playlist_list[state.play_previous_index].songName
+                const songAlbum = rootState.playlist.playlist_list[state.play_previous_index].album ? rootState.playlist.playlist_list[state.play_previous_index].album.title : rootState.playlist.playlist_list[state.play_previous_index].albumname
                 const link_data = await axios.post("/url/search",{
-                    songName: rootState.playlist.playlist_list[state.play_previous_index].name,
-                    songAlbum: rootState.playlist.playlist_list[state.play_previous_index].album.title
+                    songName, songAlbum
                 })
                 if(link_data.status === 200 && link_data.data.code === 1) {
                     const link = link_data.data.result

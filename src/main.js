@@ -20,7 +20,6 @@ Vue.use(Tool)
 
 //初始化store
 store.commit("player/setPlayer")
-store.dispatch("user/getUser")
 
 //全局注册过滤器
 Object.keys(Filter).forEach(key => {  
