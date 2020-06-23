@@ -2,14 +2,14 @@
     <div class="album-detail">
         <div class="album-detail-container">
             <div class="album-detail-bgp">
-                <v-img :src="`https://y.qq.com/music/photo_new/T002R300x300M000${albumDetail.mid}_1.jpg?max_age=2592000`"></v-img>
+                <v-img :src="`https://y.qq.com/music/photo_new/T002R300x300M000${albumDetail.mid}_1.jpg?max_age=2592000`" v-if="albumDetail.mid"></v-img>
                 <div class="album-detail-bgp-mask"></div>
             </div>
             <v-card style="background-color: transparent" class="elevation-0">
                 <v-container>
                     <v-row class="px-0">
                         <v-col cols="6">
-                            <v-img style="border-radius: 1rem" :src="`https://y.qq.com/music/photo_new/T002R300x300M000${albumDetail.mid}_1.jpg?max_age=2592000`"></v-img>
+                            <v-img style="border-radius: 1rem" :src="`https://y.qq.com/music/photo_new/T002R300x300M000${albumDetail.mid}_1.jpg?max_age=2592000`" v-if="albumDetail.mid"></v-img>
                         </v-col>
                         <v-col cols="6">
                             <v-row class="flex-column " style="height: 100%;">
@@ -18,7 +18,7 @@
                                 </v-col>
                                 <v-col cols="auto">
                                     <v-avatar width="2rem" height="2rem" min-width="2rem" min-height="2rem">
-                                        <img :src="`https://y.gtimg.cn/music/photo_new/T001R300x300M000${albumDetail.singermid}.jpg?max_age=2592000`" :alt="albumDetail.singername">
+                                        <img :src="`https://y.gtimg.cn/music/photo_new/T001R300x300M000${albumDetail.singermid}.jpg?max_age=2592000`" :alt="albumDetail.singername" v-if="albumDetail.mid">
                                     </v-avatar>
                                     <span class="body-1 ml-2 white--text">{{albumDetail.singername}}</span>
                                 </v-col>
@@ -38,7 +38,7 @@
             <song-list style="margin-top: -1rem" :playlist="albumDetail.list" :playlist_id="albumDetail.mid"></song-list>
             <p class="text-center ma-2 green--text text--accent-4">没有了诶...</p>
             <div class="player-placeholder" v-if="$store.state.player.play_id !== ''"></div>
-            <description :detail="albumDetail" v-show="descriptionShow" @show="descriptionShow = false" />
+            <description :logo="`https://y.qq.com/music/photo_new/T002R300x300M000${albumDetail.mid}_1.jpg?max_age=2592000`" :name="albumDetail.name" :desc="albumDetail.desc" v-show="descriptionShow" @show="descriptionShow = false" v-if="albumDetail.hasOwnProperty('desc')"/>
         </div>
     </div>
 </template>
@@ -70,6 +70,20 @@
                     if(data.status === 200) {
                         if(data.data.response.code === 0) {
                             this.albumDetail = data.data.response.data
+                            this.albumDetail.list = data.data.response.data.list.map( v => {
+                                return {
+                                    name: v.songname || null,
+                                    id: v.songmid || null,
+                                    albumId: v.albummid || null,
+                                    albumName: v.albumname || null,
+                                    mvId: null,
+                                    mvName: null,
+                                    artists: v.singer.map(sing => {return {id: sing.mid, name: sing.name}}) || [],
+                                    vip: 0,
+                                    createTime: data.data.response.data.aDate || "1990-01-01",
+                                    canPlay: true
+                                }
+                            })
                         }
                     }
                 }catch(err) {

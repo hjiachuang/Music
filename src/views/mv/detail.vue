@@ -1,7 +1,7 @@
 <template>
     <div class="mv-detail">
         <div class="video-player" ref="video">
-            <video-player class="vue-video-player" :options="playerOptions" :playsinline="true" @play="played = true"></video-player>
+            <video-player class="vue-video-player" :options="playerOptions" :playsinline="true" @play="played = true; $store.commit('player/pause')" @pause="played = false; $store.commit('player/play')"></video-player>
             <div class="video-player-choice-clarity" v-if="!played">
                 <v-chip class="ma-2 float-right" small color="green" text-color="white" @click="showChoiceBox = !showChoiceBox">{{clarity[curClarity]}}</v-chip>
                 <div class="choice-box" v-if="showChoiceBox">

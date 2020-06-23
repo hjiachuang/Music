@@ -5,19 +5,19 @@
         <v-icon class="i-close" @click="$emit('show')">mdi-close</v-icon>
       </div>
       <div class="logo">
-        <img :src="detail.logo || `https://y.qq.com/music/photo_new/T002R300x300M000${detail.mid}_1.jpg?max_age=2592000`" alt />
+        <img :src="logo"/>
       </div>
       <div class="title">
-        <h1>{{detail.name}}</h1>
+        <h1>{{name}}</h1>
       </div>
-      <div class="tag">
+      <div class="tag" v-if="tags.length !== 0">
         <span>标签：</span>
         <ul>
-          <li v-for="(item,index) in detail.tags" :key="index">{{item.name}}</li>
+          <li v-for="(item,index) in tags" :key="index">{{item.name}}</li>
         </ul>
       </div>
       <div class="content">
-        <p v-html="description(detail.desc)"></p>
+        <p v-html="description(desc)"></p>
       </div>
     </div>
   </transition>
@@ -27,9 +27,21 @@
 export default {
   name: "description",
   props: {
-    detail: {
-      type: Object,
-      required: true
+    name: {
+      type: String,
+      default: ""
+    },
+    logo: {
+      type: String,
+      default: ""
+    },
+    tags: {
+      type: Array,
+      default: () => []
+    },
+    desc: {
+      type: String,
+      default: ""
     },
     enterActiveClass: {
       type: String,

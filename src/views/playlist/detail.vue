@@ -2,14 +2,14 @@
     <div class="playlist-detail">
         <div class="playlist-detail-container">
             <div class="playlist-detail-bgp">
-                <v-img :src="playlistDetail.logo"></v-img>
+                <v-img :src="playlistDetail.logo" v-if="playlistDetail.hasOwnProperty('logo')"></v-img>
                 <div class="playlist-detail-bgp-mask"></div>
             </div>
             <v-card style="background-color: transparent" class="elevation-0">
                 <v-container>
                     <v-row class="px-0">
                         <v-col cols="6">
-                            <v-img style="border-radius: 1rem" :src="playlistDetail.logo"></v-img>
+                            <v-img style="border-radius: 1rem" :src="playlistDetail.logo" v-if="playlistDetail.hasOwnProperty('logo')"></v-img>
                         </v-col>
                         <v-col cols="6">
                             <v-row class="flex-column justify-space-between" style="height: 100%;">
@@ -18,7 +18,7 @@
                                 </v-col>
                                 <v-col cols="auto">
                                     <v-avatar width="2rem" height="2rem" min-height="2rem">
-                                        <img :src="playlistDetail.headurl" :alt="playlistDetail.nickname">
+                                        <img :src="playlistDetail.headurl" :alt="playlistDetail.nickname" v-if="playlistDetail.hasOwnProperty('headurl')">
                                     </v-avatar>
                                     <span class="body-1 ml-2 white--text">{{playlistDetail.nickname}}</span>
                                 </v-col>
@@ -37,7 +37,7 @@
             </v-card>
             <song-list style="margin-top: -1rem;" :playlist="playlistDetail.songlist" :playlist_id="playlistDetail.disstid"></song-list>
             <div class="player-placeholder" v-if="$store.state.player.play_id !== ''"></div>
-            <description :detail="playlistDetail" v-show="descriptionShow" @show="descriptionShow = false" />
+            <description :logo="playlistDetail.logo" :tags="playlistDetail.tags" :name="playlistDetail.name" :desc="playlistDetail.desc" v-show="descriptionShow" @show="descriptionShow = false" v-if="playlistDetail.hasOwnProperty('desc')"/>
         </div>
     </div>
 </template>
@@ -77,6 +77,20 @@
                     const data = await this.$axios.get(`/api/getSongListDetail?disstid=${this.playlistId}`)
                     if(data.status === 200) {
                         this.playlistDetail = data.data.response.cdlist[0]
+                        this.playlistDetail.songlist = this.playlistDetail.songlist.map(v => {
+                            return {
+                                name: v.name || null,
+                                id: v.mid || null,
+                                albumId: v.album.pmid || null,
+                                albumName: v.album.name || null,
+                                mvId: v.mv.vid || null,
+                                mvName: v.mv.name || null,
+                                artists: v.singer.map(sing => {return {id: sing.mid, name: sing.name}}) || [],
+                                vip: v.sa,
+                                createTime: v.time_public || "1990-01-01",
+                                canPlay: true
+                            }
+                        })
                     }else {
                         console.log("网络错误")
                     }

@@ -13,6 +13,9 @@ export default {
         setPlayLists(state, lists) {
             state.playlist_list = lists.lists
             state.playlist_id = lists.id
+        },
+        canPlay(state, index) {
+            state.playlist_list[index].canPlay = false
         }
     },
 

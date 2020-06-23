@@ -43,7 +43,7 @@
                     </li>
                 </ul>
             </div>
-            <p class="text-center ma-0 pa-2 green--text text--accent-4" style="position: relative; background-color: #fff;" v-if="loading">Loading...</p>
+            <p class="text-center ma-0 pa-2 green--text text--accent-4" style="position: relative; background-color: #fff;" v-if="this.$store.state.load.loading">Loading...</p>
             <p class="text-center ma-0 pa-2 green--text text--accent-4" style="position: relative; background-color: #fff;" v-if="noMore">没有了诶...</p>
             <div class="player-placeholder" v-if="$store.state.player.play_id !== ''"></div>
 <!--            <description :detail="artistDetail" v-show="descriptionShow" @show="descriptionShow = false"/>-->
@@ -56,7 +56,6 @@
     import SongList from '../../components/SongList'
     import AlbumList from '../../components/AlbumList'
     import VideoList from '../../components/VideoList'
-    // import * as easings from 'vuetify/es5/services/goto/easing-patterns'
     export default {
         name: "artist-detail",
         components: { SongList, AlbumList, VideoList },
@@ -138,7 +137,20 @@
                     if (data.status === 200) {
                         if (data.data.response.code === 0 && data.data.response.songList.code === 0) {
                             this.artist_songList_total = data.data.response.songList.data.totalNum
-                            this.artist_songList.push( ...data.data.response.songList.data.songList.map(v=>v.songInfo) )
+                            this.artist_songList.push( ...data.data.response.songList.data.songList.map( v => {
+                                return {
+                                    name: v.songInfo.name || null,
+                                    id: v.songInfo.mid || null,
+                                    albumId: v.songInfo.album.pmid || null,
+                                    albumName: v.songInfo.album.name || null,
+                                    mvId: v.songInfo.mv.vid || null,
+                                    mvName: v.songInfo.mv.name || null,
+                                    artists: v.songInfo.singer.map(sing => {return {id: sing.mid, name: sing.name}}) || [],
+                                    vip: v.songInfo.sa,
+                                    createTime: v.songInfo.time_public || "1990-01-01",
+                                    canPlay: true
+                                }
+                            }))
                         } else {
                             console.log("获取歌手歌曲列表失败")
                         }
@@ -211,7 +223,7 @@
                 this._getArtistMvlist(id)
             },
             load() {
-                this.loading = true
+                this.$store.commit("load/setLoad");
                 if(this.show === 'songlist') {
                     this.songPage +=1
                     this._getArtistSonglist()
@@ -223,10 +235,10 @@
                     this.mvPage += 1
                     this._getArtistMvlist(this.artist_mv_tag[this.selectMvTag].id)
                 }else {
-                    this.loading = false
+                    this.$store.dispatch("load/endLoad");
                 }
                 setTimeout(() => {
-                    this.loading = false
+                    this.$store.dispatch("load/endLoad");
                 }, 500)
             }
         }

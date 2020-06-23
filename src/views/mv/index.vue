@@ -15,7 +15,7 @@
             </v-tabs>
             <p class="text-right overline mx-2 mt-2 mb-0 black--text" v-if="mvList.length > 0">共有{{mvTotal}}条结果</p>
             <video-list :videolist="mvList" v-if="mvList.length > 0"></video-list>
-            <p class="text-center ma-2 green--text text--accent-4" v-if="loading">Loading...</p>
+            <p class="text-center ma-2 green--text text--accent-4" v-if="this.$store.state.load.loading">Loading...</p>
             <p class="text-center ma-2 green--text text--accent-4" v-if="noMore">没有了诶...</p>
         </div>
     </div>
@@ -132,20 +132,16 @@
                     this.page = 1
                     this.mvList = []
                     this.mvTotal = 0
-                    this.loading = true
+                    this.$store.commit("load/setLoad")
                     this._getMv(area, version)
-                    setTimeout(() => {
-                        this.loading = false
-                    }, 500)
+                    this.$store.dispatch("load/endLoad")
                 }
             },
             load() {
-                this.loading = true
+                this.$store.commit("load/setLoad")
                 this.page += 1
                 this._getMv(this.selectArea, this.selectVersion)
-                setTimeout(() => {
-                    this.loading = false
-                }, 500)
+                this.$store.dispatch("load/endLoad")
             }
         }
     }

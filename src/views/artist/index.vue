@@ -50,7 +50,7 @@
                     </v-col>
                 </v-row>
             </v-container>
-            <p class="text-center ma-2 green--text text--accent-4" v-if="loading">Loading...</p>
+            <p class="text-center ma-2 green--text text--accent-4" v-if="this.$store.state.load.loading">Loading...</p>
             <p class="text-center ma-2 green--text text--accent-4" v-if="noMore">没有了诶...</p>
         </div>
     </div>
@@ -354,12 +354,10 @@
 
             },
             load() {
-                this.loading = true
+                this.$store.commit("load/setLoad");
                 this.page += 1
                 this._getSinger(this.select.area,this.select.genre,this.select.index,this.select.sex)
-                setTimeout(() => {
-                    this.loading = false
-                }, 500)
+                this.$store.dispatch("load/endLoad");
             },
             toDetail(artist) {
                 this.$router.push(`/artist/detail/${artist.singer_mid}?name=${encodeURIComponent(artist.singer_name)}`)

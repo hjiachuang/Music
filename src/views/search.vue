@@ -29,7 +29,7 @@
             <div class="search-result mt-2" v-if="searchResult.hasOwnProperty('song') && searchResultSong.length !== 0">
                 <h4>搜索结果</h4>
                 <!--搜索结果中匹配到有歌手信息的显示块-->
-                <v-card class="ma-1 px-3" v-if="searchResult.hasOwnProperty('zhida') && searchResult.zhida.type === 1">
+                <v-card class="ma-1 px-3" v-if="searchResult.hasOwnProperty('zhida') && searchResult.zhida.type === 1" @click="$router.push(`/artist/detail/${searchResult.zhida['zhida_singer'].singerMID}?name=${searchResult.zhida['zhida_singer'].singerName}`)">
                     <v-row>
                         <v-col cols="4">
                             <v-img style="border-radius: 50%;" width="100%"
@@ -82,7 +82,7 @@
                         </v-list-item-content>
                     </v-list-item>
                 </ul>
-                <p class="text-center mb-0 pink--text text--accent-1" v-if="loading">Loading...</p>
+                <p class="text-center mb-0 pink--text text--accent-1" v-if="this.$store.state.load.loading">Loading...</p>
                 <p class="text-center mb-0 pink--text text--accent-1" v-if="noMore">没有了诶...</p>
             </div>
         </v-container>
@@ -101,14 +101,13 @@
             searchResult: {},
             searchResultSong: [],
             searchSuggest: [],
-            loading: false
         }),
         computed: {
             noMore() {
                 return this.searchResultSong >= this.searchResult.song.totalnum
             },
             disabled() {
-                return this.loading || this.noMore
+                return this.$store.state.load.loading || this.noMore
             }
         },
         async created() {
@@ -175,12 +174,10 @@
                 }, 2000)
             },
             load() {
-                this.loading = true
+                this.$store.commit("load/setLoad")
                 this.searchPage += 1
                 this.search()
-                setTimeout(() => {
-                    this.loading = false
-                }, 500)
+                this.$store.dispatch("load/endLoad")
             },
             saveSearchHistory(word) {
                 const index = this.searchHistory.findIndex(v => v === word)

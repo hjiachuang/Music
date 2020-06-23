@@ -21,6 +21,7 @@ Vue.use(Tool)
 //初始化store
 store.commit("player/setPlayer")
 
+
 //全局注册过滤器
 Object.keys(Filter).forEach(key => {  
   Vue.filter(key, Filter[key])  

@@ -47,18 +47,18 @@
                 <v-col cols="12" class="title font-weight-bold personal-title">最新音乐</v-col>
             </v-row>
             <div class="newsong">
-                <v-row v-for="(item, index) in newsong" :key="index" @click="$router.push(`/song/${item.mid}`)">
+                <v-row v-for="(item, index) in newsong" :key="index" @click="$router.push(`/song/${item.id}`)">
                     <v-col cols="3">
                         <v-lazy>
-                            <v-img class="mx-auto align-center text-center" style="border-radius: 6px" width="100%" height="100%" :src="`https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.album.pmid}.jpg?max_age=2592000`">
-                              <v-icon class="white--text" v-if="$store.state.player.play_id === item.id && $store.state.player.playing && !$store.state.player.player.ended" @click="playSong(index, item.id)">mdi-pause-circle-outline</v-icon>
-                              <v-icon class="white--text" v-else @click="playSong(index, item.id)">mdi-play-circle-outline</v-icon>
+                            <v-img class="mx-auto align-center text-center" style="border-radius: 6px" width="100%" height="100%" :src="`https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albumId}.jpg?max_age=2592000`">
+                              <v-icon class="white--text" v-if="$store.state.player.play_id === item.id && $store.state.player.playing && !$store.state.player.player.ended" @click.stop="playSong(index, item.id)">mdi-pause-circle-outline</v-icon>
+                              <v-icon class="white--text" v-else @click.stop="playSong(index, item.id)">mdi-play-circle-outline</v-icon>
                             </v-img>
                         </v-lazy>
                     </v-col>
                     <v-col cols="9" class="d-flex flex-column justify-space-around">
                         <rolling-subtitles style="height: auto" :text="item.name" fontSize="0.875rem" :fontWeight="800"/>
-                        <rolling-subtitles style="height: auto" :text="item.singer | artist" fontSize="0.775rem" :fontWeight="400"/>
+                        <rolling-subtitles style="height: auto" :text="item.artists | artist" fontSize="0.775rem" :fontWeight="400"/>
                     </v-col>
                 </v-row>
             </div>
@@ -111,7 +111,20 @@ export default {
               const data = response.data.response
               if(data.recomPlaylist.code === 0) this.playlists = data.recomPlaylist.data["v_hot"]
               if(data["new_album"].code === 0) this.newalbum = data["new_album"].data.albums
-              if(data["new_song"].code === 0) this.newsong = data["new_song"].data.songlist
+              if(data["new_song"].code === 0) this.newsong = data["new_song"].data.songlist.map(v => {
+                  return {
+                      name: v.name || null,
+                      id: v.mid || null,
+                      albumId: v.album.pmid || null,
+                      albumName: v.album.name || null,
+                      mvId: v.mv.vid || null,
+                      mvName: v.mv.name || null,
+                      artists: v.singer.map(sing => {return {id: sing.mid, name: sing.name}}) || [],
+                      vip: v.sa,
+                      createTime: v.time_public || "1990-01-01",
+                      canPlay: true
+                  }
+              })
             }
           }catch(err) {
             console.log(err)

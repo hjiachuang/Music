@@ -48,7 +48,7 @@
                     </v-lazy>
                 </v-col>
             </v-row>
-            <p class="text-center ma-2 green--text text--accent-4" v-if="loading">Loading...</p>
+            <p class="text-center ma-2 green--text text--accent-4" v-if="this.$store.state.load.loading">Loading...</p>
             <p class="text-center ma-2 green--text text--accent-4" v-if="noMore">没有了诶...</p>
         </v-container>
     </div>
@@ -140,7 +140,7 @@
                                 this.playlists.newest.sum = result.sum
                                 this.playlists.newest.list.push(...result.list)
                             }
-                            this.loading = false
+                            this.$store.dispatch("load/endLoad")
                         }else {
                             console.log("歌单列表获取失败")
                         }
@@ -168,17 +168,15 @@
                         list: []
                     }
                 }
-                this.loading = true
+                this.$store.commit("load/setLoad")
                 this._getPlaylists()
             },
             load() {
-                this.loading = true
+                this.$store.commit("load/setLoad")
                 this.start += 30
                 this.end += 30
                 this._getPlaylists()
-                setTimeout(() => {
-                    this.loading = false
-                }, 500)
+                this.$store.dispatch("load/endLoad")
             },
             toDetail(playlist) {
                 this.$router.push(`/playlist/detail/${playlist.dissid}?name=${encodeURIComponent(playlist.dissname)}`)

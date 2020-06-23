@@ -31,6 +31,20 @@
                     if(data.status === 200) {
                         if(data.data.response.code === 0) {
                             this.rankDetail = data.data.response.detail.data
+                            this.rankDetail.songInfoList = data.data.response.detail.data.songInfoList.map( v => {
+                                return {
+                                    name: v.name || null,
+                                    id: v.mid || null,
+                                    albumId: v.album.pmid || null,
+                                    albumName: v.album.name || null,
+                                    mvId: v.mv.vid || null,
+                                    mvName: v.mv.name || null,
+                                    artists: v.singer.map(sing => {return {id: sing.mid, name: sing.name}}) || [],
+                                    vip: v.sa,
+                                    createTime: v.time_public || "1990-01-01",
+                                    canPlay: true
+                                }
+                            })
                         }
                     }else {
                         console.log("网络错误")

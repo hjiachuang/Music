@@ -9,13 +9,38 @@
                     <v-list-item two-line v-if="songInfo.hasOwnProperty('track_info')">
                         <v-list-item-content>
                             <v-list-item-title style="color: white">{{playName}}</v-list-item-title>
-                            <v-list-item-subtitle @click="toSinger" style="color: white">
-                            <span v-for="(item, index) in playArticles" :key="index">
-                            {{item.name}}
-                            <span v-if="index !== (playArticles.length) - 1">/</span>
-                            </span>
-                                <v-icon dense style="color: white">mdi-chevron-right</v-icon>
-                            </v-list-item-subtitle>
+                            <v-dialog>
+                                <template v-slot:activator="{ on, showArtists }">
+                                    <v-list-item-subtitle style="color: white" v-bind="showArtists" v-on="on">
+                                        <span v-for="(item, index) in playArtists" :key="index">
+                                            {{item.name}}
+                                            <span v-if="index !== (playArtists.length) - 1">/</span>
+                                        </span>
+                                        <v-icon dense style="color: white">mdi-chevron-right</v-icon>
+                                    </v-list-item-subtitle>
+                                </template>
+                                <v-card>
+                                    <v-card-title>
+                                        <span class="headline">请选择要查看的歌手：</span>
+                                    </v-card-title>
+                                    <v-card-text>
+                                        <v-container style="line-height: 1.5;">
+                                            <v-row>
+                                                <v-col cols="12" class="py-0" v-for="(item, index) in playArtists" :key="index" @click="toSinger(item)">
+                                                    <v-row>
+                                                        <v-col cols="3" class="pa-1">
+                                                            <v-img :src="`http://y.gtimg.cn/music/photo_new/T001R300x300M000${item.id}.jpg`" v-if="item.id"></v-img>
+                                                        </v-col>
+                                                        <v-col cols="9" class="align-center">
+                                                            <p class="body-1 font-weight-black" style="margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{item.name}}</p>
+                                                        </v-col>
+                                                    </v-row>
+                                                </v-col>
+                                            </v-row>
+                                        </v-container>
+                                    </v-card-text>
+                                </v-card>
+                            </v-dialog>
                         </v-list-item-content>
                     </v-list-item>
                 </v-list>
@@ -35,8 +60,8 @@
                                         <v-col cols="12">
                                             <v-icon>mdi-account-music</v-icon>
                                             <strong class="mx-2">歌手:</strong>
-                                            <span v-for="(item, index) in playArticles" :key="index">{{item.name}}
-                                                <span v-if="index !== (playArticles.length) - 1">/</span>
+                                            <span v-for="(item, index) in playArtists" :key="index">{{item.name}}
+                                                <span v-if="index !== (playArtists.length) - 1">/</span>
                                             </span>
                                         </v-col>
                                         <v-col cols="12">
@@ -104,11 +129,11 @@
                                 <v-card-text>
                                     <v-container style="line-height: 1.5;">
                                         <v-row>
-                                            <v-col cols="12" v-for="(item, index) in playlist" :key="index" :class="playId === item.mid? 'green--text':''" @click="playThis(index)">
+                                            <v-col cols="12" v-for="(item, index) in playlist" :key="index" :class="playId === item.id? 'green--text': (item.canPlay? '':'grey--text')" @click="playThis(index)">
                                                 <div class="float-left" style="max-width: calc(100% - 24px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
                                                     <strong>{{item.name}}</strong> -
-                                                    <span v-for="(item, index) in playArticles" :key="index">
-                                                        {{item.name}}<span v-if="index !== (playArticles.length) - 1">/</span>
+                                                    <span v-for="(artist, index) in item.artists" :key="index">
+                                                        {{artist.name}}<span v-if="index !== (item.artists.length) - 1">/</span>
                                                     </span>
                                                 </div>
                                                 <v-icon class="float-right" @click="$store.dispatch('playlist/deleteSong',item.mid)">mdi-close</v-icon>
@@ -132,6 +157,7 @@
         name: "song",
         data: () => ({
             songInfo: {},
+            song: {},
             width: 0,
             progress: 25,
             timer: null
@@ -142,7 +168,7 @@
                 player: state => state.player.player,
                 playing: state => state.player.playing,
                 playName: state => state.player.play_name,
-                playArticles: state => state.player.play_articles,
+                playArtists: state => state.player.play_artists,
                 playAlbum: state => state.player.play_album,
                 playImg: state => state.player.play_img,
                 playlist: state => state.playlist.playlist_list
@@ -159,7 +185,7 @@
         },
         watch: {
             songInfo() {
-                this.play()
+                // this.play()
             },
             playId(id) {
                 this._getSongDetail(id)
@@ -173,35 +199,28 @@
                     if(data.status === 200) {
                         if(data.data.response.code === 0 && data.data.response.songinfo.code === 0) {
                             this.songInfo = data.data.response.songinfo.data
+                            const songTemp = data.data.response.songinfo.data.track_info
+                            this.song = {
+                                name: songTemp.name || null,
+                                id: songTemp.mid || null,
+                                albumId: songTemp.album.pmid || null,
+                                albumName: songTemp.album.name || null,
+                                mvId: songTemp.mv.vid || null,
+                                mvName: songTemp.mv.name || null,
+                                artists: songTemp.singer.map(sing => {return {id: sing.mid, name: sing.name}}) || [],
+                                vip: songTemp.sa,
+                                createTime: songTemp.time_public || "1990-01-01",
+                                canPlay: true
+                            }
+                            this.play()
                         }
                     }
                 }catch(err) {
                     console.log(err)
                 }
             },
-            toSinger() {
-                let singer
-                if(this.songInfo.hasOwnProperty('track_info')) {
-                    singer = this.songInfo['track_info'].singer
-                    if(singer.length === 0) {
-                        //没有歌手，忽略
-                        return false
-                    }
-                    if(singer.length === 1) {
-                        //才一个歌手直接跳转
-                        this.$router.push(`/artist/detail/${singer[0].mid}?name=${singer[0].name}`)
-                    }else {
-                        //大于一个歌手，请选择其中一个。
-                        const html = singer.reduce((sum, v) => {
-                            return sum + `<a href="#/artist/detail/${v.mid}?name=${v.name}">${v.name}</a>`
-                        }, "")
-                        this.$mesbox.alert(html,"请选择要查看的歌手", {
-                            customClass: "mes-box",
-                            dangerouslyUseHTMLString: true,
-                            showConfirmButton: false
-                        })
-                    }
-                }
+            toSinger(singer) {
+                this.$router.push(`/artist/detail/${singer.id}?name=${singer.name}`)
             },
             getProgress() {
                 clearInterval(this.timer)
@@ -219,9 +238,9 @@
                 this.$store.dispatch("player/next")
             },
             play() {
-                if (this.$store.state.player.play_id !== this.songInfo.track_info.id) {
+                if (this.$store.state.player.play_id !== this.song.id) {
                     this.$store.dispatch("player/index", {
-                        lists: [ this.songInfo.track_info ],
+                        lists: [ this.song ],
                         index: 0,
                         type: "add"
                     });
@@ -236,11 +255,11 @@
             },
             setPattern() {
                 if(this.$store.state.player.play_pattern === "List Loop") {
-                    this.$store.dispatch("player/setPlayPattern", "Random Play")
+                    this.$store.commit("player/setPlayPattern", "Random Play")
                 }else if(this.$store.state.player.play_pattern === "Random Play") {
-                    this.$store.dispatch("player/setPlayPattern", "Singles Loop")
+                    this.$store.commit("player/setPlayPattern", "Singles Loop")
                 }else {
-                    this.$store.dispatch("player/setPlayPattern", "List Loop")
+                    this.$store.commit("player/setPlayPattern", "List Loop")
                 }
             },
             clearPlaylist() {
