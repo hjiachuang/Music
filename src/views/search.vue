@@ -122,7 +122,7 @@
         methods: {
             async _getSearchSuggest() {
                 try {
-                    const searchSuggest = await this.$axios.get("/api/getHotkey")
+                    const searchSuggest = await this.$axios.get("/getHotkey")
                     if (searchSuggest.status === 200) {
                         if (searchSuggest.data.response.code === 0) {
                             this.searchSuggest = searchSuggest.data.response.data.hotkey
@@ -147,7 +147,7 @@
                 }
                 this.saveSearchHistory(this.searchWord)
                 try {
-                    const search = await this.$axios.get(`/api/getSearchByKey?key=${this.searchWord}&page=${this.searchPage}`)
+                    const search = await this.$axios.get(`/getSearchByKey?key=${this.searchWord}&page=${this.searchPage}`)
                     if (search.status === 200) {
                         if (search.data.response.code === 0) {
                             if(search.data.response.data.keyword !== this.searchResult.keyword) {

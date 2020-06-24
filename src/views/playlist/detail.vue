@@ -74,7 +74,7 @@
         methods: {
             async _getPlaylistDetail() {
                 try{
-                    const data = await this.$axios.get(`/api/getSongListDetail?disstid=${this.playlistId}`)
+                    const data = await this.$axios.get(`/getSongListDetail?disstid=${this.playlistId}`)
                     if(data.status === 200) {
                         this.playlistDetail = data.data.response.cdlist[0]
                         this.playlistDetail.songlist = this.playlistDetail.songlist.map(v => {

@@ -8,31 +8,10 @@ module.exports = {
     open: true,
     proxy: {
       '/api': {
-        target: "http://localhost:3200",
-        changeOrigin: true,
+        target: "http://localhost:3000",
+        changeOrigin: true,  //是否跨域
         pathRewrite:{
           '^/api':''
-        }
-      },
-      '/url': {
-        target: "http://192.168.1.10:2020",
-        changeOrigin: true,
-        pathRewrite:{
-          '^/url':'/api'
-        }
-      },
-      '/qqmusic': {
-        target: "http://u.y.qq.com/cgi-bin/musicu.fcg",
-        changeOrigin: true,
-        pathRewrite:{
-          '^/qqmusic':''
-        }
-      },
-      '/cloudmusic': {
-        target: "http://interface.music.163.com",
-        changeOrigin: true,
-        pathRewrite:{
-          '^/cloudmusic':''
         }
       }
     }

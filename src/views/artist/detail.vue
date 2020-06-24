@@ -111,7 +111,7 @@
             async _getArtistDesc() {
                 try {
                     const mid = this.$route.params.id;
-                    const url = `/api/getSingerDesc?singermid=${mid}`;
+                    const url = `/getSingerDesc?singermid=${mid}`;
                     const data = await this.$axios.get(url);
                     if (data.status === 200) {
                         if (data.data.response.singerDetail.code === 0) {
@@ -132,7 +132,7 @@
             async _getArtistSonglist() {
                 try {
                     const mid = this.$route.params.id;
-                    const url = `/api/getSingerSonglist?singermid=${mid}&page=${this.songPage}&limit=${this.songLimit}`;
+                    const url = `/getSingerSonglist?singermid=${mid}&page=${this.songPage}&limit=${this.songLimit}`;
                     const data = await this.$axios.get(url);
                     if (data.status === 200) {
                         if (data.data.response.code === 0 && data.data.response.songList.code === 0) {
@@ -164,7 +164,7 @@
             async _getArtistAlbumlist() {
                 try {
                     const mid = this.$route.params.id;
-                    const url = `/api/getSingerAlbum?singermid=${mid}&page=${this.albumPage}&limit=${this.albumLimit}`;
+                    const url = `/getSingerAlbum?singermid=${mid}&page=${this.albumPage}&limit=${this.albumLimit}`;
                     const data = await this.$axios.get(url);
                     if (data.status === 200) {
                         if (data.data.response.code === 0 && data.data.response.albumList.code === 0) {
@@ -183,7 +183,7 @@
             async _getArtistMvTag() {
                 try {
                     const mid = this.$route.params.id;
-                    const url = `/api/getMvByTag?singermid=${mid}`;
+                    const url = `/getMvByTag?singermid=${mid}`;
                     const data = await this.$axios.get(url);
                     if (data.status === 200) {
                         if (data.data.response.code === 0 && data.data.response.mvTag.code === 0) {
@@ -201,7 +201,7 @@
             async _getArtistMvlist( id=0 ) {
                 try {
                     const mid = this.$route.params.id;
-                    const url = `/api/getSingerMv?singermid=${mid}&page=${this.mvPage}&limit=${this.mvLimit}&tagid=${id}`;
+                    const url = `/getSingerMv?singermid=${mid}&page=${this.mvPage}&limit=${this.mvLimit}&tagid=${id}`;
                     const data = await this.$axios.get(url);
                     if (data.status === 200) {
                         if (data.data.response.code === 0 && data.data.response.mvList.code === 0) {

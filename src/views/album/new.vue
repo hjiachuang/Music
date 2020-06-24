@@ -72,7 +72,7 @@
         methods: {
             async _getNewAlbumTag() {
                 try{
-                    const data = await this.$axios.get('/api/getNewDisks?getTag=true')
+                    const data = await this.$axios.get('/getNewDisks?getTag=true')
                     if(data.status === 200) {
                         if(data.data.response.code === 0 && data.data.response.new_album_tag.code === 0) {
                             this.new_album_tag = data.data.response.new_album_tag.data.area
@@ -88,7 +88,7 @@
             },
             async _getNewAlbum(area=1) {
                 try{
-                    const data = await this.$axios.get(`/api/getNewDisks?area=${area}&page=${this.page}`)
+                    const data = await this.$axios.get(`/getNewDisks?area=${area}&page=${this.page}`)
                     if(data.status === 200) {
                         if(data.data.response.code === 0 && data.data.response.new_album.code === 0) {
                             this.new_album_total = data.data.response.new_album.data.total

@@ -109,7 +109,7 @@
                 }
             },
             async _getPlaylistsCategory() {
-                const data = await this.$axios.get("/api/getSongListCategories")
+                const data = await this.$axios.get("/getSongListCategories")
                 if(data.status === 200) {
                     if(data.data.response.code === 0) {
                         this.category = data.data.response.data.categories
@@ -122,7 +122,7 @@
             },
             async _getPlaylists() {
                 try{
-                    const data = await this.$axios.get("/api/getSongLists",{
+                    const data = await this.$axios.get("/getSongLists",{
                         params: {
                             categoryId: this.categoryId,
                             page: this.start,

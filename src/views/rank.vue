@@ -56,13 +56,14 @@ export default {
     },
     methods: {
         async _getRank() {
-            const rankListUrl = "/qqmusic?data={%22comm%22:{%22g_tk%22:5381,%22uin%22:%22%22,%22format%22:%22json%22,%22inCharset%22:%22utf-8%22,%22outCharset%22:%22utf-8%22,%22notice%22:0,%22platform%22:%22h5%22,%22needNewCode%22:1,%22ct%22:23,%22cv%22:0},%22topList%22:{%22module%22:%22musicToplist.ToplistInfoServer%22,%22method%22:%22GetAll%22,%22param%22:{}}}"
+            const rankListUrl = "/getTopLists"
             try {
-                const response = await this.$axios.get(rankListUrl)
-                if (response.status === 200 && response.data.code === 0) {
-                    const data = response.data.topList
-                    if (data.code === 0) {
-                        this.rankList = data.data.group
+                const data = await this.$axios.get(rankListUrl)
+                if (data.status === 200) {
+                    if(data.data.response.code === 0 && data.data.response.topList.code === 0) {
+                        this.rankList = data.data.response.topList.data.group
+                    }else {
+                        console.log("获取排行榜失败")
                     }
                 }else {
                     console.log("网络错误")

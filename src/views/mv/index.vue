@@ -110,7 +110,7 @@
         methods: {
             async _getMv(area=0, version=0) {
                 try{
-                    const data = await this.$axios.get(`/api/getMv?area_id=${this.area[area].id}&version_id=${this.version[version].id}&page=${this.page}&limit=${this.limit}`)
+                    const data = await this.$axios.get(`/getMv?area_id=${this.area[area].id}&version_id=${this.version[version].id}&page=${this.page}&limit=${this.limit}`)
                     if(data.status === 200) {
                         if(data.data.response.code === 0 && data.data.response.mv_list.code === 0) {
                             this.mvTotal = data.data.response.mv_list.data.total

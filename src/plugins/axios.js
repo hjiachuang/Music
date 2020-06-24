@@ -8,8 +8,14 @@ import axios from "axios";
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
+const devBaseUrl = '/api';
+const proBaseUrl = '/';
+let url;
+process.env.NODE_ENV === 'development' ? url = devBaseUrl : url = proBaseUrl ;
+
+
 let config = {
-  // baseURL: "http://192.168.1.10:8080" || process.env.baseURL || process.env.apiUrl,
+  baseURL: url,
   // timeout: 60 * 1000, // Timeout
   withCredentials: true, // Check cross-site Access-Control
 };

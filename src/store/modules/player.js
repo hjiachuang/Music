@@ -91,7 +91,7 @@ export default {
                     }
                     return sum
                 }, "")
-                const link_data = await axios.get(`/api/getUrl?name=${encodeURIComponent(name)}&album=${encodeURIComponent(album)}&artists=${encodeURIComponent(artists)}&rawData=true`)
+                const link_data = await axios.get(`/getUrl?name=${encodeURIComponent(name)}&album=${encodeURIComponent(album)}&artists=${encodeURIComponent(artists)}&rawData=true`)
                 if(link_data.status === 200) {
                     if(link_data.data.code === 0) {
                         const link = link_data.data.result.url

@@ -66,7 +66,7 @@
             async _getAlbum() {
                 const mid = this.$route.params.id
                 try{
-                    const data = await this.$axios.get(`/api/getAlbumInfo?albummid=${mid}`)
+                    const data = await this.$axios.get(`/getAlbumInfo?albummid=${mid}`)
                     if(data.status === 200) {
                         if(data.data.response.code === 0) {
                             this.albumDetail = data.data.response.data

@@ -84,7 +84,7 @@
             async _getMvDetail() {
                 const id = this.$route.params.id
                 try{
-                    const data = await this.$axios.get(`/api/getMvPlay?vid=${id}`)
+                    const data = await this.$axios.get(`/getMvPlay?vid=${id}`)
                     if(data.status === 200) {
                         if(data.data.response.code === 0 && data.data.response.getMVUrl.code === 0 && data.data.response.mvinfo.code === 0) {
                             const urlData = data.data.response.getMVUrl.data[id].mp4

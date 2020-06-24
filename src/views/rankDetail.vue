@@ -27,7 +27,7 @@
                 const id = this.$route.params.id
                 const period = this.$route.query.period
                 try {
-                    const data = await this.$axios.get(`/api/getRanks?topId=${id}&period=${period}`)
+                    const data = await this.$axios.get(`/getRanks?topId=${id}&period=${period}`)
                     if(data.status === 200) {
                         if(data.data.response.code === 0) {
                             this.rankDetail = data.data.response.detail.data

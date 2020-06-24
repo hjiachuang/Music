@@ -336,7 +336,7 @@
                     }
                 }
                 try{
-                    const data = await this.$axios.get(`/api/getSingerList?area=${this.type.area[area].id}&sex=${this.type.sex[sex].id}&index=${this.type.index[index].id}&genre=${this.type.genre[genre].id}&page=${this.page}`)
+                    const data = await this.$axios.get(`/getSingerList?area=${this.type.area[area].id}&sex=${this.type.sex[sex].id}&index=${this.type.index[index].id}&genre=${this.type.genre[genre].id}&page=${this.page}`)
                     if(data.status === 200) {
                         if(data.data.response.code === 0 && data.data.response.singerList.code === 0) {
                             this.singer = data.data.response.singerList.data

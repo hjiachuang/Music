@@ -106,7 +106,7 @@ export default {
     methods: {
         async _getRecommend() {
           try {
-            const response = await this.$axios.get("/api/getRecommend")
+            const response = await this.$axios.get("/getRecommend")
             if (response.status === 200 && response.data.response.code === 0) {
               const data = response.data.response
               if(data.recomPlaylist.code === 0) this.playlists = data.recomPlaylist.data["v_hot"]

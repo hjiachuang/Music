@@ -92,11 +92,12 @@
             <v-img width="100%" height="100%" :src="playImg"></v-img>
             <div class="song-background-mask"></div>
         </div>
-        <div class="song-play-img">
+        <div class="song-play-img" v-show="!showLyric" @click="showLyric = true">
             <v-img  width="100%" height="100%" :src="playImg"></v-img>
             <div class="song-play-progress-ball" :style="`transform: rotate(${progress*3.6}deg)`"></div>
             <el-progress class="song-play-progress-circle" :width="width * 0.6 + 12" :stroke-width="8" type="circle" :percentage="progress" :show-text="false" :color="'#4CAF50'"></el-progress>
         </div>
+        <lyric class="song-lyric" :playing="playing" :lyric="lyric" :currentTime="currentTime" v-show="showLyric && lyric.length !== 0" @off="showLyric = false"></lyric>
         <div class="song-control">
             <v-container>
                 <v-row class="align-center text-center">
@@ -146,20 +147,24 @@
                     </v-col>
                 </v-row>
             </v-container>
-
         </div>
     </div>
 </template>
 
 <script>
     import { mapState } from 'vuex'
+    import Lyric from '../components/Lyric'
     export default {
         name: "song",
+        components: { Lyric },
         data: () => ({
             songInfo: {},
             song: {},
+            lyric: "",
+            currentTime: 0,
             width: 0,
             progress: 25,
+            showLyric: false,
             timer: null
         }),
         computed: {
@@ -178,24 +183,24 @@
             this.$store.commit("load/setLoad")
             this.width = window.document.body.offsetWidth
             this._getSongDetail()
+            this._getSongLyric()
             this.$store.dispatch("load/endLoad")
         },
         mounted() {
             this.getProgress()
         },
         watch: {
-            songInfo() {
-                // this.play()
-            },
             playId(id) {
+                console.log(id)
                 this._getSongDetail(id)
+                this._getSongLyric(id)
             }
         },
         methods: {
             async _getSongDetail(mid=null) {
                 const id = mid || this.$route.params.id
                 try{
-                    const data = await this.$axios.get(`/api/getSongInfo?songmid=${id}`)
+                    const data = await this.$axios.get(`/getSongInfo?songmid=${id}`)
                     if(data.status === 200) {
                         if(data.data.response.code === 0 && data.data.response.songinfo.code === 0) {
                             this.songInfo = data.data.response.songinfo.data
@@ -213,7 +218,28 @@
                                 canPlay: true
                             }
                             this.play()
+                        }else {
+                            console.log("网络错误")
                         }
+                    }else {
+                        console.log("网络错误")
+                    }
+                }catch(err) {
+                    console.log(err)
+                }
+            },
+            async _getSongLyric(mid=null) {
+                const id = mid || this.$route.params.id
+                try{
+                    const data = await this.$axios.get(`/getLyric?songmid=${id}`)
+                    if(data.status === 200) {
+                        if(data.data.response.code === 0) {
+                            this.lyric = data.data.response.lyric
+                        }else {
+                            console.log("网络错误")
+                        }
+                    }else {
+                        console.log("网络错误")
                     }
                 }catch(err) {
                     console.log(err)
@@ -228,6 +254,7 @@
                     const player = this.player
                     const currentTime = player.currentTime || 0
                     const duration = player.duration || 100
+                    this.currentTime = currentTime
                     this.progress = currentTime/duration * 100
                 }, 100)
             },
@@ -249,9 +276,11 @@
                         this.$store.commit("player/play")
                     }
                 }
+                this.getProgress()
             },
             pause() {
                 this.$store.commit("player/pause");
+                clearInterval(this.timer)
             },
             setPattern() {
                 if(this.$store.state.player.play_pattern === "List Loop") {
@@ -365,8 +394,12 @@
             z-index: -1;
         }
     }
+    .song-lyric {
+        max-height: calc(100vh - 151px);
+    }
     .song-control {
-        position: absolute;
+        position: fixed;
+        z-index: 1;
         left: 0;
         right: 0;
         bottom: 0;
