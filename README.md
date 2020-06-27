@@ -6,7 +6,7 @@
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/hjiachuang/Music?style=flat-square) ![GitHub package.json version](https://img.shields.io/github/package-json/v/hjiachuang/Music?style=flat-square) ![GitHub open issues](https://img.shields.io/github/issues/hjiachuang/Music?style=flat-square) ![GitHub closed issues](https://img.shields.io/github/issues-closed/hjiachuang/Music) ![GitHub last commit](https://img.shields.io/github/last-commit/hjiachuang/Music?style=flat-square) ![GitHub top language](https://img.shields.io/github/languages/top/hjiachuang/Music?style=flat-square)
 
-![推荐页截图](https://raw.githubusercontent.com/hjiachuang/Music/master/resources/images/recommend.png)
+![推荐页截图](https://api.aidioute.cn/resource/music_demo/images/recommend.png)
 </div>
 
 
