@@ -1,6 +1,7 @@
 # Music -- 一个基于Vue框架开发的WebApp
 ### 页面上的展示的内容服务均来自QQ音乐。
 <div align="center">
+
 ![GitHub watchers](https://img.shields.io/github/watchers/hjiachuang/Music?style=social) ![GitHub stars](https://img.shields.io/github/stars/hjiachuang/Music?style=social) ![GitHub forks](https://img.shields.io/github/forks/hjiachuang/Music?style=social)
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/hjiachuang/Music?style=flat-square) ![GitHub package.json version](https://img.shields.io/github/package-json/v/hjiachuang/Music?style=flat-square) ![GitHub open issues](https://img.shields.io/github/issues/hjiachuang/Music?style=flat-square) ![GitHub closed issues](https://img.shields.io/github/issues-closed/hjiachuang/Music) ![GitHub last commit](https://img.shields.io/github/last-commit/hjiachuang/Music?style=flat-square) ![GitHub top language](https://img.shields.io/github/languages/top/hjiachuang/Music?style=flat-square)
