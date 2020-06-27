@@ -118,13 +118,16 @@
                             this.selectArea = area
                             this.selectVersion = version
                         }else {
-                            console.log("获取MV列表失败")
+                            console.error("获取MV列表失败, code:", data.data.response.code)
+                            this.$message.error("获取MV列表失败")
                         }
                     }else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             getMv(area, version) {

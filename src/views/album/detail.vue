@@ -55,12 +55,8 @@
         }),
         created() {
             this.$store.commit("load/setLoad")
-            try{
-                this._getAlbum()
-                this.$store.dispatch("load/endLoad")
-            }catch(err) {
-                console.log(err)
-            }
+            this._getAlbum()
+            this.$store.dispatch("load/endLoad")
         },
         methods: {
             async _getAlbum() {
@@ -84,10 +80,17 @@
                                     canPlay: true
                                 }
                             })
+                        }else {
+                            console.error("获取专辑详情失败, code:", data.data.response.code)
+                            this.$message.error("获取专辑详情失败")
                         }
+                    }else {
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             description(str) {

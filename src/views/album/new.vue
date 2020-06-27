@@ -60,14 +60,9 @@
         },
         created() {
             this.$store.commit("load/setLoad")
-            try{
-                this._getNewAlbumTag()
-                this._getNewAlbum()
-                this.$store.dispatch("load/endLoad")
-            }catch(err) {
-                console.log(err)
-            }
-
+            this._getNewAlbumTag()
+            this._getNewAlbum()
+            this.$store.dispatch("load/endLoad")
         },
         methods: {
             async _getNewAlbumTag() {
@@ -77,13 +72,16 @@
                         if(data.data.response.code === 0 && data.data.response.new_album_tag.code === 0) {
                             this.new_album_tag = data.data.response.new_album_tag.data.area
                         }else {
-                            console.log("获取新碟分类列表失败")
+                            console.error("获取新碟分类列表失败, code:", data.data.response.code)
+                            this.$message.error("获取新碟分类列表失败")
                         }
                     }else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             async _getNewAlbum(area=1) {
@@ -94,35 +92,34 @@
                             this.new_album_total = data.data.response.new_album.data.total
                             this.new_album.push( ...data.data.response.new_album.data.albums )
                         }else {
-                            console.log("获取新碟列表失败")
+                            console.error("获取新碟列表失败, code:", data.data.response.code)
+                            this.$message.error("获取新碟列表失败")
                         }
                     }else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             getNewAlbum(id) {
                 if(id !== this.area) {
-                    this.loading = true
+                    this.$store.commit("load/setLoad")
                     this.area = id
                     this.new_album_total = 0
                     this.new_album = []
                     this.page = 1
                     this._getNewAlbum(id)
-                    setTimeout(() => {
-                        this.loading = false
-                    }, 500)
+                    this.$store.dispatch("load/endLoad")
                 }
             },
             load() {
-                this.loading = true
+                this.$store.commit("load/setLoad")
                 this.page += 1
                 this._getNewAlbum(this.area)
-                setTimeout(() => {
-                    this.loading = false
-                }, 500)
+                this.$store.dispatch("load/endLoad")
             },
             toDetail(id, name) {
                 this.$router.push(`/album/detail/${id}?name=${name}`)

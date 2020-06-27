@@ -1,3 +1,5 @@
+import { Message } from "element-ui"
+
 const albumImgUrl = (id) => {
     return `https://y.gtimg.cn/music/photo_new/T002R300x300M000${id}.jpg?max_age=2592000`
 }
@@ -91,12 +93,13 @@ export default {
                     }
                     return sum
                 }, "")
-                const link_data = await axios.get(`/getUrl?name=${encodeURIComponent(name)}&album=${encodeURIComponent(album)}&artists=${encodeURIComponent(artists)}&rawData=true`)
+                const link_data = await axios.get(`/getUrl?name=${encodeURIComponent(name)}&album=${encodeURIComponent(album)}&artists=${encodeURIComponent(artists)}`)
                 if(link_data.status === 200) {
                     if(link_data.data.code === 0) {
                         const link = link_data.data.result.url
                         if(link === null) {
-                            console.log("无法播放自动下一首1")
+                            Message.warning("无法播放，自动下一首")
+                            console.log("无法播放自动下一首(link -- null)")
                             commit("playlist/canPlay", state.play_previous_index, {root: true})
                             dispatch('next')
                             return
@@ -111,17 +114,20 @@ export default {
                         })
                         commit('play')
                     }else {
-                        console.log("无法播放自动下一首2")
+                        Message.warning("无法播放，自动下一首")
+                        console.log("无法播放自动下一首(获取link失败)")
                         commit("playlist/canPlay", state.play_previous_index, {root: true})
                         dispatch('next')
                     }
                 }else {
-                    console.log("网络错误自动下一首3")
+                    Message.warning("无法播放，自动下一首")
+                    console.log("网络错误自动下一首(网络错误)")
                     commit("playlist/canPlay", state.play_previous_index, {root: true})
                     dispatch('next')
                 }
             }else {
-                console.log("无法播放自动下一首4")
+                Message.warning("无法播放，自动下一首")
+                console.log("无法播放自动下一首(canPlay -- false)")
                 dispatch('next')
             }
         },
@@ -151,6 +157,7 @@ export default {
             },0)
             if(allCanPlay === rootState.playlist.playlist_list.length) {
                 console.log("当前播放列表没有可以播放的歌曲")
+                Message.error("当前播放列表没有可以播放的歌曲")
             }else {
                 if(rootState.playlist.playlist_list.length < 1) {
                     commit("clearPlayer")
@@ -194,6 +201,7 @@ export default {
             },0)
             if(allCanPlay === rootState.playlist.playlist_list.length) {
                 console.log("当前播放列表没有可以播放的歌曲")
+                Message.error("当前播放列表没有可以播放的歌曲")
             }else {
                 if (rootState.playlist.playlist_list.length <= 1) {
                     state.player.load()

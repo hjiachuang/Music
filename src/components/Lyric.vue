@@ -66,11 +66,13 @@
                     this.lyricArr.forEach(v => {
                         v.active = false
                     })
-                    for(let i = 0; i < this.lyricArr.length-1; i++) {
-                        if(this.lyricArr[i].time <= this.currentTime && this.currentTime <= this.lyricArr[i+1].time) {
-                            this.lyricArr[i].active = true
-                            this.$refs.lyric.scrollTop = 50 * i
-                            break
+                    if(this.lyricArr.length > 1) {
+                        for(let i = 0; i < this.lyricArr.length-1; i++) {
+                            if(this.lyricArr[i].time <= this.currentTime && this.currentTime <= this.lyricArr[i+1].time) {
+                                this.lyricArr[i].active = true
+                                this.$refs.lyric.scrollTop = 50 * i
+                                break
+                            }
                         }
                     }
                     if(this.lyricArr[this.lyricArr.length - 1].time <= this.currentTime) {
@@ -97,7 +99,7 @@
     transition: all 1s;
     .lyric-item {
         margin: 0;
-        height: 50px;
+        /*height: 50px;*/
         line-height: 50px;
         text-align: center;
         color: white;

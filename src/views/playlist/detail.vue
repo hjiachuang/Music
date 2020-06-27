@@ -64,12 +64,8 @@
             this.playlistId = this.$route.params.id
             this.playlistName = this.$route.query.name
             this.$store.commit("load/setLoad")
-            try {
-                this._getPlaylistDetail()
-                this.$store.dispatch("load/endLoad")
-            }catch(err) {
-                console.log(err)
-            }
+            this._getPlaylistDetail()
+            this.$store.dispatch("load/endLoad")
         },
         methods: {
             async _getPlaylistDetail() {
@@ -92,10 +88,12 @@
                             }
                         })
                     }else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             description(str) {

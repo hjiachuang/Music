@@ -95,17 +95,13 @@
             }
         },
         created() {
-            try{
-                this.$store.commit("load/setLoad");
-                this._getArtistDesc();
-                this._getArtistSonglist();
-                this._getArtistAlbumlist();
-                this._getArtistMvTag();
-                this._getArtistMvlist();
-                this.$store.dispatch("load/endLoad");
-            }catch(err) {
-                console.log(err)
-            }
+            this.$store.commit("load/setLoad");
+            this._getArtistDesc();
+            this._getArtistSonglist();
+            this._getArtistAlbumlist();
+            this._getArtistMvTag();
+            this._getArtistMvlist();
+            this.$store.dispatch("load/endLoad");
         },
         methods: {
             async _getArtistDesc() {
@@ -117,16 +113,19 @@
                         if (data.data.response.singerDetail.code === 0) {
                             this.artist_detail = data.data.response.singerDetail.data.singer_list[0]
                         } else {
-                            console.log("获取歌手详情失败")
+                            console.error("获取歌手详情失败, code:", data.data.response.code)
+                            this.$message.error("获取歌手详情失败")
                         }
                         let xml = data.data.response.singerDetail.data.singer_list[0].wiki
                         xml = '<?xml version="1.0" encoding="utf-8"?>' + xml
                         this.artist_detail.wiki = new X2JS().xml_str2json(xml).info
                     } else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 } catch (err) {
-                    console.log(err);
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             async _getArtistSonglist() {
@@ -152,13 +151,16 @@
                                 }
                             }))
                         } else {
-                            console.log("获取歌手歌曲列表失败")
+                            console.error("获取歌手歌曲列表失败, code:", data.data.response.code)
+                            this.$message.error("获取歌手歌曲列表失败")
                         }
                     } else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 } catch (err) {
-                    console.log(err);
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             async _getArtistAlbumlist() {
@@ -171,13 +173,16 @@
                             this.artist_albumList_total = data.data.response.albumList.data.total
                             this.artist_albumList.push(...data.data.response.albumList.data.albumList)
                         } else {
-                            console.log("获取歌手专辑列表失败")
+                            console.error("获取歌手专辑列表失败, code:", data.data.response.code)
+                            this.$message.error("获取歌手MV分类列表失败")
                         }
                     } else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 } catch (err) {
-                    console.log(err);
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             async _getArtistMvTag() {
@@ -189,13 +194,16 @@
                         if (data.data.response.code === 0 && data.data.response.mvTag.code === 0) {
                             this.artist_mv_tag = data.data.response.mvTag.data.list
                         } else {
-                            console.log("获取歌手MV分类列表失败")
+                            console.error("获取歌手MV分类列表失败, code:", data.data.response.code)
+                            this.$message.error("获取歌手MV分类列表失败")
                         }
                     } else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 } catch (err) {
-                    console.log(err);
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             async _getArtistMvlist( id=0 ) {
@@ -208,13 +216,16 @@
                             this.artist_mvList_total = data.data.response.mvList.data.total
                             this.artist_mvList.push(...data.data.response.mvList.data.list)
                         } else {
-                            console.log("获取歌手MV列表失败")
+                            console.error("获取歌手MV列表失败, code:", data.data.response.code)
+                            this.$message.error("获取歌手MV列表失败")
                         }
                     } else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 } catch (err) {
-                    console.log(err);
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             refresh(id) {

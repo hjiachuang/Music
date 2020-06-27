@@ -100,24 +100,27 @@
         methods: {
             init() {
                 this.$store.commit("load/setLoad")
-                try{
-                    this._getPlaylistsCategory()
-                    this._getPlaylists()
-                    this.$store.dispatch("load/endLoad")
-                }catch(err) {
-                    console.log(err)
-                }
+                this._getPlaylistsCategory()
+                this._getPlaylists()
+                this.$store.dispatch("load/endLoad")
             },
             async _getPlaylistsCategory() {
-                const data = await this.$axios.get("/getSongListCategories")
-                if(data.status === 200) {
-                    if(data.data.response.code === 0) {
-                        this.category = data.data.response.data.categories
+                try {
+                    const data = await this.$axios.get("/getSongListCategories")
+                    if(data.status === 200) {
+                        if(data.data.response.code === 0) {
+                            this.category = data.data.response.data.categories
+                        }else {
+                            console.error("获取歌单分类失败, code:", data.data.response.code)
+                            this.$message.error("获取歌单分类失败")
+                        }
                     }else {
-                        console.log("获取歌单分类失败")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
-                }else {
-                    console.log("网络错误")
+                }catch(err) {
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             async _getPlaylists() {
@@ -142,13 +145,16 @@
                             }
                             this.$store.dispatch("load/endLoad")
                         }else {
-                            console.log("歌单列表获取失败")
+                            console.error("获取歌单列表失败, code:", data.data.response.code)
+                            this.$message.error("获取歌单列表失败")
                         }
                     }else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             changePlaylist(category) {

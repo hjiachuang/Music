@@ -110,14 +110,10 @@
                 return this.$store.state.load.loading || this.noMore
             }
         },
-        async created() {
+        created() {
             this.$store.commit("load/setLoad")
-            try {
-                await this._getSearchSuggest()
-                this.$store.dispatch("load/endLoad")
-            } catch (err) {
-                console.log(err)
-            }
+            this._getSearchSuggest()
+            this.$store.dispatch("load/endLoad")
         },
         methods: {
             async _getSearchSuggest() {
@@ -127,13 +123,16 @@
                         if (searchSuggest.data.response.code === 0) {
                             this.searchSuggest = searchSuggest.data.response.data.hotkey
                         } else {
-                            console.log("热门搜索推荐获取失败")
+                            console.error("获取热门搜索推荐失败, code:", searchSuggest.data.response.code)
+                            this.$message.error("获取热门搜索推荐失败")
                         }
                     } else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 } catch (err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             async search() {
@@ -156,13 +155,16 @@
                             this.searchResult = search.data.response.data
                             this.searchResultSong.push(...this.searchResult.song.list)
                         } else {
-                            console.log("搜索失败")
+                            console.error("搜索失败, code:", search.data.response.code)
+                            this.$message.error("搜索失败")
                         }
                     } else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", search.status)
+                        this.$message.error("网络错误")
                     }
                 } catch (err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
                 this.searchMsg = "搜索成功"
                 this.hideMsg()

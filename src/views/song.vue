@@ -191,7 +191,6 @@
         },
         watch: {
             playId(id) {
-                console.log(id)
                 this._getSongDetail(id)
                 this._getSongLyric(id)
             }
@@ -219,13 +218,16 @@
                             }
                             this.play()
                         }else {
-                            console.log("网络错误")
+                            console.error("获取歌曲详情失败, code:", data.data.response.code)
+                            this.$message.error("获取歌曲详情失败")
                         }
                     }else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             async _getSongLyric(mid=null) {
@@ -236,13 +238,16 @@
                         if(data.data.response.code === 0) {
                             this.lyric = data.data.response.lyric
                         }else {
-                            console.log("网络错误")
+                            console.error("获取歌曲歌词失败, code:", data.data.response.code)
+                            this.$message.error("获取歌曲歌词失败")
                         }
                     }else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             toSinger(singer) {
@@ -292,7 +297,7 @@
                 }
             },
             clearPlaylist() {
-                this.$mesbox.confirm('确定要清空播放列表?', '提示', {
+                this.$messageBox.confirm('确定要清空播放列表?', '提示', {
                     confirmButtonText: '清空',
                     cancelButtonText: '取消',
                     type: 'warning',
@@ -300,12 +305,10 @@
                 }).then(() => {
                     this.$store.dispatch("playlist/clearPlaylist")
                     this.$router.push("/recommend")
+                    this.$message.success("已清空播放列表")
                     // this.$router
                 }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消删除'
-                    });
+                    this.$message.info("已取消删除")
                 });
             },
             playThis(index) {

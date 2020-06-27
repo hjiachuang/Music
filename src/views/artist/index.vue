@@ -309,12 +309,8 @@
         },
         created() {
             this.$store.commit("load/setLoad")
-            try {
-                this._getSinger(0,0,0,0)
-                this.$store.dispatch("load/endLoad")
-            }catch(err) {
-                console.log(err)
-            }
+            this._getSinger(0,0,0,0)
+            this.$store.dispatch("load/endLoad")
         },
         methods: {
             async _getSinger(area,genre,index,sex) {
@@ -343,13 +339,16 @@
                             this.singerlist.push( ...data.data.response.singerList.data.singerlist )
                             this.currentPage = this.page
                         }else {
-                            console.log("没有找到对应的歌手诶。")
+                            console.error("没有找到对应的歌手, code:", data.data.response.code)
+                            this.$message.error("没有找到对应的歌手")
                         }
                     }else {
-                        console.log("网络错误")
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
 
             },

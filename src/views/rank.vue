@@ -45,14 +45,10 @@ export default {
             }
         }
     },
-    async created() {
+    created() {
         this.$store.commit("load/setLoad")
-        try {
-          await this._getRank();
-          this.$store.dispatch("load/endLoad")
-        }catch(err) {
-          console.log(err)
-        }
+        this._getRank();
+        this.$store.dispatch("load/endLoad")
     },
     methods: {
         async _getRank() {
@@ -63,13 +59,16 @@ export default {
                     if(data.data.response.code === 0 && data.data.response.topList.code === 0) {
                         this.rankList = data.data.response.topList.data.group
                     }else {
-                        console.log("获取排行榜失败")
+                        console.error("获取排行榜榜单失败, code:", data.data.response.code, data.data.response.topList.code)
+                        this.$message.error("获取排行榜榜单失败")
                     }
                 }else {
-                    console.log("网络错误")
+                    console.error("网络错误, code:", data.status)
+                    this.$message.error("网络错误")
                 }
             }catch(err) {
-                console.log(err)
+                console.error(err)
+                this.$message.error("请求失败")
             }
         }
     }

@@ -94,14 +94,10 @@ export default {
         newalbum: [],
         newsong: []
     }),
-    async created() {
+    created() {
         this.$store.commit("load/setLoad")
-        try {
-          await this._getRecommend();
-          this.$store.dispatch("load/endLoad")
-        }catch(err) {
-          console.log(err)
-        }
+        this._getRecommend();
+        this.$store.dispatch("load/endLoad")
     },
     methods: {
         async _getRecommend() {
@@ -109,25 +105,42 @@ export default {
             const response = await this.$axios.get("/getRecommend")
             if (response.status === 200 && response.data.response.code === 0) {
               const data = response.data.response
-              if(data.recomPlaylist.code === 0) this.playlists = data.recomPlaylist.data["v_hot"]
-              if(data["new_album"].code === 0) this.newalbum = data["new_album"].data.albums
-              if(data["new_song"].code === 0) this.newsong = data["new_song"].data.songlist.map(v => {
-                  return {
-                      name: v.name || null,
-                      id: v.mid || null,
-                      albumId: v.album.pmid || null,
-                      albumName: v.album.name || null,
-                      mvId: v.mv.vid || null,
-                      mvName: v.mv.name || null,
-                      artists: v.singer.map(sing => {return {id: sing.mid, name: sing.name}}) || [],
-                      vip: v.sa,
-                      createTime: v.time_public || "1990-01-01",
-                      canPlay: true
-                  }
-              })
+              if(data.recomPlaylist.code === 0) {
+                  this.playlists = data.recomPlaylist.data["v_hot"]
+              }else {
+                  this.$message.error("网络错误:playlists")
+              }
+              if(data["new_album"].code === 0) {
+                  this.newalbum = data["new_album"].data.albums
+              }else {
+                  this.$message.error("网络错误，请稍后重试 :newalbum")
+              }
+              if(data["new_song"].code === 0) {
+                  this.newsong = data["new_song"].data.songlist.map(v => {
+                      return {
+                          name: v.name || null,
+                          id: v.mid || null,
+                          albumId: v.album.pmid || null,
+                          albumName: v.album.name || null,
+                          mvId: v.mv.vid || null,
+                          mvName: v.mv.name || null,
+                          artists: v.singer.map(sing => {
+                              return {id: sing.mid, name: sing.name}
+                          }) || [],
+                          vip: v.sa,
+                          createTime: v.time_public || "1990-01-01",
+                          canPlay: true
+                      }
+                  })
+              }else {
+                  this.$message.error("网络错误，请稍后重试 :newsong")
+              }
+            }else {
+                this.$message.error("网络错误，请稍后重试")
             }
           }catch(err) {
-            console.log(err)
+            console.error(err)
+            this.$message.error("请求失败，请稍后重试")
           }
         },
         playSong(index, id) {

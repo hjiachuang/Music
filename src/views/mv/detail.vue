@@ -70,9 +70,9 @@
                 }
             }
         }),
-        async created() {
+        created() {
             this.$store.commit("load/setLoad")
-            await this._getMvDetail()
+            this._getMvDetail()
             this.$store.dispatch("load/endLoad")
         },
         mounted() {
@@ -107,10 +107,17 @@
                                 }
                             ]
                             this.mvInfo = data.data.response.mvinfo.data[id]
+                        }else {
+                            console.error("获取MV详情失败, code:", data.data.response.code)
+                            this.$message.error("获取MV详情失败")
                         }
+                    }else {
+                        console.error("网络错误, code:", data.status)
+                        this.$message.error("网络错误")
                     }
                 }catch(err) {
-                    console.log(err)
+                    console.error(err)
+                    this.$message.error("请求失败")
                 }
             },
             initVideo() {
