@@ -9,7 +9,7 @@
 ![推荐页截图](https://api.aidioute.cn/resource/music_demo/images/recommend.png)
 </div>
 
-
+#### 线上地址：[Music](https://music.aidioute.cn)
 > 当前代码仅共学习，不可做商业用途
 
 ### 关于项目
