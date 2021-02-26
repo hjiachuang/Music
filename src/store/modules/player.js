@@ -1,7 +1,15 @@
-import { Message } from "element-ui"
+import { Message } from 'element-ui'
 
 const albumImgUrl = (id) => {
     return `https://y.gtimg.cn/music/photo_new/T002R300x300M000${id}.jpg?max_age=2592000`
+}
+
+const devBaseUrl = 'http://192.168.1.153:3000';
+const proBaseUrl = '';
+let url = process.env.NODE_ENV === 'development' ? devBaseUrl : proBaseUrl ;
+
+function next() {
+    this.dispatch('player/next')
 }
 
 export default {
@@ -10,7 +18,7 @@ export default {
     //模块State
     state: {
         player: null,               //播放器
-        player_timer: null,         //播放器定时器
+        player_auto: false,         //播放器自动开关
         playing: false,             //是否播放中
         play_id: "",                //播放歌曲id
         play_name: "",              //播放歌曲名
@@ -93,35 +101,42 @@ export default {
                     }
                     return sum
                 }, "")
-                const link_data = await axios.get(`/getUrl?name=${encodeURIComponent(name)}&album=${encodeURIComponent(album)}&artists=${encodeURIComponent(artists)}`)
-                if(link_data.status === 200) {
-                    if(link_data.data.code === 0) {
-                        const link = link_data.data.result.url
-                        if(link === null) {
+                try{
+                    const link_data = await axios.get(`${url}/getUrl?name=${encodeURIComponent(name)}&album=${encodeURIComponent(album)}&artists=${encodeURIComponent(artists)}`)
+                    if(link_data.status === 200) {
+                        if(link_data.data.code === 0) {
+                            const link = link_data.data.result.url
+                            if(link === null) {
+                                Message.warning("无法播放，自动下一首")
+                                console.log("无法播放自动下一首(link -- null)")
+                                commit("playlist/canPlay", state.play_previous_index, {root: true})
+                                dispatch('next')
+                                return
+                            }
+                            commit('setPlayMessage',{
+                                id: rootState.playlist.playlist_list[state.play_previous_index].id,
+                                name: rootState.playlist.playlist_list[state.play_previous_index].name,
+                                artists: rootState.playlist.playlist_list[state.play_previous_index].artists,
+                                album: rootState.playlist.playlist_list[state.play_previous_index].albumName,
+                                link: link,
+                                img: albumImgUrl(rootState.playlist.playlist_list[state.play_previous_index].albumId)
+                            })
+                            commit('play')
+                        }else {
                             Message.warning("无法播放，自动下一首")
-                            console.log("无法播放自动下一首(link -- null)")
+                            console.log("无法播放自动下一首(获取link失败)")
                             commit("playlist/canPlay", state.play_previous_index, {root: true})
                             dispatch('next')
-                            return
                         }
-                        commit('setPlayMessage',{
-                            id: rootState.playlist.playlist_list[state.play_previous_index].id,
-                            name: rootState.playlist.playlist_list[state.play_previous_index].name,
-                            artists: rootState.playlist.playlist_list[state.play_previous_index].artists,
-                            album: rootState.playlist.playlist_list[state.play_previous_index].albumName,
-                            link: link,
-                            img: albumImgUrl(rootState.playlist.playlist_list[state.play_previous_index].albumId)
-                        })
-                        commit('play')
                     }else {
                         Message.warning("无法播放，自动下一首")
-                        console.log("无法播放自动下一首(获取link失败)")
+                        console.log("网络错误自动下一首(网络错误)")
                         commit("playlist/canPlay", state.play_previous_index, {root: true})
                         dispatch('next')
                     }
-                }else {
+                }catch(err) {
                     Message.warning("无法播放，自动下一首")
-                    console.log("网络错误自动下一首(网络错误)")
+                    console.log("网络错误自动下一首(请求失败)")
                     commit("playlist/canPlay", state.play_previous_index, {root: true})
                     dispatch('next')
                 }
@@ -131,23 +146,8 @@ export default {
                 dispatch('next')
             }
         },
-        //设置播放定时器
-        setTimer({ commit, dispatch, state }) {
-            clearTimeout(state.player_timer)
-            state.player.oncanplay = () => {
-                clearTimeout(state.player_timer)
-                const duration = state.player.duration
-                const currentTime = state.player.currentTime
-                const timer = setTimeout(() => {
-                    dispatch('next')
-                }, (duration - currentTime + 1) * 1000)
-                commit('setTimer',timer)
-            }
-
-        },
         //下一首
         next({ commit, dispatch, state, rootState }) {
-            clearTimeout(state.player_timer)
             const allCanPlay = rootState.playlist.playlist_list.reduce((sum, v) => {
                 if(v.hasOwnProperty("canPlay") && !v.canPlay) {
                     return sum + 1
@@ -156,11 +156,14 @@ export default {
                 }
             },0)
             if(allCanPlay === rootState.playlist.playlist_list.length) {
+                commit("clearPlayer")
                 console.log("当前播放列表没有可以播放的歌曲")
                 Message.error("当前播放列表没有可以播放的歌曲")
             }else {
                 if(rootState.playlist.playlist_list.length < 1) {
                     commit("clearPlayer")
+                    console.log("当前播放列表为空")
+                    Message.error("当前播放列表为空")
                 }else if(rootState.playlist.playlist_list.length === 1) {
                     state.player.load()
                     commit('play')
@@ -292,9 +295,24 @@ export default {
                 state.play_img = img
             }
         },
-        //设置当前播放的定时器
-        setTimer(state, timer) {
-            state.player_timer = timer
+        //设置Audio组件播放结束自动下一首
+        audioAuto(state, type) {
+            if(state.player_auto === true) {
+                if(type) {
+                    console.log('已经是自动播放下一首了，忽略这次操作')
+                }else {
+                    console.log('取消自动播放下一首')
+                    state.player.removeEventListener('ended',next.bind(this), false)
+                }
+            }else {
+                if(type) {
+                    console.log('自动播放下一首')
+                    state.player.addEventListener('ended',next.bind(this), false)
+                }else {
+                    console.log('已经取消自动播放下一首了，忽略这次操作')
+                }
+            }
+            state.player_auto = type
         },
         //播放（播放控制）
         play(state) {
@@ -302,26 +320,26 @@ export default {
                 if(state.player.paused) {
                     state.player.play()
                     state.playing = true
-                    this.dispatch('player/setTimer')
+                    this.commit('player/audioAuto', true)
                 }else if(state.player.ended){
                     state.player.load()
                     state.player.play()
                     state.playing = true
-                    this.dispatch('player/setTimer')
+                    this.commit('player/audioAuto', true)
                 }
             }else {
                 state.player.src = state.play_link
                 state.player.load()
                 state.player.play()
                 state.playing = true
-                this.dispatch('player/setTimer')
+                this.commit('player/audioAuto', true)
             }
         },
         //暂停
         pause(state) {
             if(!state.player.paused) {
                 state.player.pause()
-                clearTimeout(state.player_timer)
+                this.commit('player/audioAuto', false)
                 state.playing = false
             }
         },
@@ -336,6 +354,9 @@ export default {
             state.play_previous_index = 0
             state.player.src = ""
             state.player.load()
+        },
+        addErrorMessage(state, msg) {
+            state.error.push(msg)
         }
     }
 }
